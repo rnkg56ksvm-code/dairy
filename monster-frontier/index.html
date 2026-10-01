@@ -1,91 +1,105 @@
-<!doctype html>
-<html lang="ja">
-<head>
+<!doctype html><html lang="ja"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>MONSTER FRONTIER</title>
+<title>MONSTER FRONTIER — ORIGIN</title>
 <style>
-:root{--bg:#08111f;--panel:#101d31;--line:#29405e;--text:#f4f8ff;--muted:#91a3b8;--cyan:#54e3ff;--gold:#ffd15c;--red:#ff6279;--green:#72e09b}
-*{box-sizing:border-box}html,body{margin:0;background:radial-gradient(circle at 50% 0,#18395a,#08111f 48%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;touch-action:manipulation}
-button{font:inherit}.app{width:min(96vw,760px);margin:auto;padding:14px 0 28px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.logo{font-weight:1000;letter-spacing:.12em}.logo span{color:var(--cyan)}.money{color:var(--gold);font-weight:900}
-.screen{display:none}.screen.on{display:block}.panel{background:#0c1728ee;border:1px solid var(--line);border-radius:22px;box-shadow:0 18px 50px #0007;padding:16px}
-h1,h2,h3,p{margin:0}.hero{padding:25px;min-height:180px;background:linear-gradient(135deg,#123454,#0b1728);border-radius:24px;border:1px solid #2d5275;position:relative;overflow:hidden}.hero:after{content:"MF";position:absolute;right:-8px;top:-35px;font-size:150px;font-weight:1000;color:#ffffff06}.eyebrow{color:var(--cyan);font-size:11px;letter-spacing:.2em;font-weight:900}.hero h1{font-size:35px;margin:7px 0}.hero p{color:#a7b8c9;line-height:1.7;font-size:13px}
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0}.card{background:#101f33;border:1px solid #29445f;border-radius:17px;padding:10px;cursor:pointer}.card.active{border-color:var(--cyan);box-shadow:0 0 0 1px #54e3ff44;background:#15314a}.monster{height:95px;display:grid;place-items:center;font-size:58px}.card b{display:block}.card small{color:var(--muted)}.primary{width:100%;border:0;border-radius:15px;padding:14px;background:linear-gradient(135deg,var(--cyan),#6b7dff);font-weight:1000;color:#06101c}.secondary{border:1px solid #304a68;background:#101e31;color:#d6e3ef;border-radius:12px;padding:10px 13px;font-weight:850}
-.map{position:relative;height:440px;border-radius:22px;overflow:hidden;border:1px solid #31516f;background:linear-gradient(#78c7df 0 24%,#8bd28a 24% 100%)}.map:before{content:"";position:absolute;inset:24% 0 0;background:repeating-linear-gradient(0deg,#79c77c 0 31px,#83ce82 31px 34px),repeating-linear-gradient(90deg,transparent 0 34px,#6ab76d 34px 37px);opacity:.7}.road{position:absolute;background:#d8c58e;border:4px solid #c0ab72;border-radius:40px;transform:rotate(-9deg);width:75%;height:85px;left:12%;top:48%}.town{position:absolute;background:#ecf4fa;border:3px solid #42627c;border-radius:14px;padding:8px 11px;font-weight:900;box-shadow:0 5px 12px #0003}.town.lab{left:9%;top:30%}.town.shop{right:8%;top:34%}.town.gym{right:12%;bottom:13%}.player{position:absolute;left:47%;top:54%;font-size:38px;filter:drop-shadow(0 5px 3px #0005);transition:.2s}.map-controls{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.map-controls button{padding:11px;border:1px solid #304a68;background:#102036;color:#dbe8f5;border-radius:12px;font-weight:900}.map-controls button:first-child{grid-column:span 3}
-.battle{padding:0;overflow:hidden;background:#d9f0d7;border:1px solid #587d69}.arena{height:430px;position:relative;background:linear-gradient(#8bd4e8 0 42%,#9dd48a 42%);overflow:hidden}.sun{position:absolute;width:80px;height:80px;border-radius:50%;background:#ffe899;right:12%;top:8%;box-shadow:0 0 35px #fff3}.platform{position:absolute;width:42%;height:50px;background:#68955e;border-radius:50%;bottom:24%;left:7%;box-shadow:inset 0 8px #80aa73}.platform.enemy{left:auto;right:7%;bottom:52%;width:36%;height:38px}.fighter{position:absolute;text-align:center;font-size:72px;z-index:2}.fighter small{display:block;font-size:11px;font-weight:1000;color:#182d3d;background:#ffffffdd;border-radius:8px;padding:4px 7px}.enemy-f{right:15%;bottom:51%}.ally-f{left:14%;bottom:22%}.hpbox{position:absolute;background:#f3f6f2;border:2px solid #344a4e;border-radius:12px;padding:7px 9px;width:43%;z-index:3;box-shadow:0 5px 15px #0002}.hpbox.enemy{right:4%;top:7%}.hpbox.ally{left:4%;bottom:7%}.hpbar{height:8px;background:#ced5d0;border-radius:9px;overflow:hidden;margin-top:5px}.hpbar i{display:block;height:100%;background:var(--green);width:100%}.hptext{font-size:10px;color:#40525a;text-align:right;margin-top:2px}.battle-log{position:absolute;left:0;right:0;bottom:0;background:#0b1727f5;color:#eef7ff;min-height:120px;padding:12px}.battle-log p{font-size:13px;line-height:1.5;margin-bottom:9px}.moves{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.move{padding:11px;border-radius:11px;border:1px solid #3c5a78;background:#14263d;color:#fff;font-weight:900}.move small{display:block;color:#9bb0c4;font-size:9px;margin-top:3px}.move:disabled{opacity:.45}.battle-tools{display:flex;gap:7px;margin-bottom:8px}.battle-tools button{border:1px solid #3c5a78;background:#12243a;color:#d9e7f2;border-radius:10px;padding:7px 9px;font-weight:800}
-.team{display:grid;gap:9px}.team-row{display:grid;grid-template-columns:55px 1fr auto;align-items:center;gap:10px;padding:11px;background:#101f33;border:1px solid #29445f;border-radius:14px}.team-row .icon{font-size:35px;text-align:center}.team-row small{color:var(--muted)}.tag{font-size:10px;padding:4px 6px;border-radius:8px;background:#1c344d;color:#a9c4d9}.nav{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.nav button{padding:12px 6px;background:#0f1e31;border:1px solid #2b4561;border-radius:12px;color:#b9c9d8;font-weight:900}.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(20px);background:#091523f5;border:1px solid #3d5c78;padding:11px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:.25s;z-index:20}.toast.show{opacity:1;transform:translateX(-50%)}
-.modal{position:fixed;inset:0;background:#020811dd;display:grid;place-items:center;padding:18px;z-index:10}.modal.hide{display:none}.dialog{width:min(94vw,430px);background:#0d1b2d;border:1px solid #34516f;border-radius:22px;padding:20px;box-shadow:0 30px 80px #000}.dialog h2{margin-bottom:8px}.dialog p{color:#9db0c2;line-height:1.7;margin-bottom:14px}.dialog .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-@media(max-width:520px){.cards{grid-template-columns:1fr}.card{display:grid;grid-template-columns:75px 1fr;align-items:center}.monster{height:70px}.map{height:390px}.arena{height:410px}.fighter{font-size:58px}}
-</style>
-</head>
-<body>
+:root{--bg:#07111d;--panel:#0e1b2c;--panel2:#14253a;--line:#2b4562;--text:#f5f8fc;--muted:#91a5ba;--cyan:#55e3ff;--gold:#ffd45e;--red:#ff6279;--green:#70df9a}
+*{box-sizing:border-box}html,body{margin:0;background:radial-gradient(circle at 50% -10%,#214e73,#07111d 52%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;touch-action:manipulation}button{font:inherit;cursor:pointer}
+.app{width:min(96vw,900px);margin:auto;padding:12px 0 28px}.top{height:50px;display:flex;align-items:center;justify-content:space-between}.brand{font-weight:1000;letter-spacing:.12em}.brand i{color:var(--cyan);font-style:normal}.stats{display:flex;gap:8px}.stat{background:#0d1a2b;border:1px solid var(--line);border-radius:11px;padding:7px 10px;font-size:11px;font-weight:900}.gold{color:var(--gold)}
+.screen{display:none}.screen.on{display:block}.panel{background:#0c1728ee;border:1px solid var(--line);border-radius:20px;padding:15px;box-shadow:0 20px 55px #0007}h1,h2,h3,p{margin:0}.muted{color:var(--muted)}
+.hero{padding:30px 22px;border-radius:24px;background:linear-gradient(135deg,#153d5c,#0c1929);border:1px solid #315a7b;position:relative;overflow:hidden}.hero:after{content:"ORIGIN";position:absolute;right:-30px;bottom:-35px;font-size:100px;font-weight:1000;color:#fff04;letter-spacing:-.08em}.eyebrow{font-size:10px;letter-spacing:.22em;color:var(--cyan);font-weight:1000}.hero h1{font-size:38px;letter-spacing:-.05em;margin:7px 0}.hero p{font-size:13px;line-height:1.8;color:#b1c1d0;max-width:600px}
+.section{margin-top:12px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.starter{background:#101f33;border:1px solid #2c4864;border-radius:17px;padding:10px;text-align:left}.starter.sel{border-color:var(--cyan);box-shadow:0 0 0 1px #55e3ff44}.sprite{font-size:62px;text-align:center;padding:8px}.starter b{display:block}.starter small{color:var(--muted)}
+.primary{width:100%;border:0;border-radius:14px;padding:14px;background:linear-gradient(135deg,var(--cyan),#7180ff);color:#06101b;font-weight:1000;margin-top:10px}.secondary{border:1px solid #34516e;background:#102137;color:#e0ebf5;border-radius:11px;padding:9px 12px;font-weight:900}
+.world{display:grid;grid-template-columns:1.4fr .8fr;gap:12px}.map{height:560px;position:relative;border-radius:18px;overflow:hidden;border:1px solid #3b6177;background:linear-gradient(#7ac8e4 0 27%,#88ce82 27%)}.map:before{content:"";position:absolute;inset:27% 0 0;background:repeating-linear-gradient(0deg,#76c476 0 28px,#82cf80 28px 31px),repeating-linear-gradient(90deg,transparent 0 33px,#6bb66b 33px 36px);opacity:.65}.route{position:absolute;background:#dcc78e;border:5px solid #c2ad72;border-radius:55px;width:75%;height:110px;left:12%;top:47%;transform:rotate(-8deg);box-shadow:0 10px 18px #0002}.place{position:absolute;background:#edf5fa;color:#1b3044;border:3px solid #4d6d82;border-radius:13px;padding:8px 10px;font-weight:1000;box-shadow:0 7px 15px #0003}.p1{left:7%;top:34%}.p2{right:6%;top:38%}.p3{right:9%;bottom:14%}.p4{left:7%;bottom:12%}.heroNpc{position:absolute;left:47%;top:51%;font-size:40px;transition:.2s;z-index:3}.mapHint{position:absolute;left:12px;right:12px;bottom:10px;padding:9px;border-radius:11px;background:#081522cc;border:1px solid #36516c;font-size:11px;color:#c4d2df}
+.side{display:grid;gap:10px}.quest{background:linear-gradient(135deg,#132943,#0e1a2b);border:1px solid #34526e;border-radius:17px;padding:14px}.quest b{display:block;margin-bottom:5px}.quest p{font-size:12px;line-height:1.6;color:#a9bac9}.actions{display:grid;gap:7px}.actions button{text-align:left;padding:12px;border:1px solid #304a67;background:#101f34;color:#e0eaf4;border-radius:12px;font-weight:900}.actions button span{float:right;color:#6f8ba4}.miniTeam{display:grid;gap:7px}.mini{display:grid;grid-template-columns:38px 1fr auto;align-items:center;gap:7px;background:#101e31;border:1px solid #29445f;border-radius:11px;padding:7px}.mini .ic{font-size:27px}.mini small{display:block;color:var(--muted);font-size:9px}.hp{height:6px;background:#293747;border-radius:9px;overflow:hidden;margin-top:4px}.hp i{display:block;height:100%;background:var(--green)}
+.battle{padding:0;overflow:hidden;background:#bfe0c0}.arena{height:570px;position:relative;background:linear-gradient(#8bd6e8 0 46%,#99d48d 46%);overflow:hidden}.sun{position:absolute;width:85px;height:85px;border-radius:50%;background:#ffeaa2;right:10%;top:8%;box-shadow:0 0 35px #fff5}.plat{position:absolute;background:#65945d;border-radius:50%;width:43%;height:55px;left:6%;bottom:31%;box-shadow:inset 0 8px #83ae75}.plat.e{left:auto;right:7%;bottom:58%;width:37%;height:42px}.fighter{position:absolute;font-size:86px;z-index:2;filter:drop-shadow(0 8px 5px #0004)}.ef{right:14%;bottom:55%}.af{left:13%;bottom:28%}.hpbox{position:absolute;width:39%;background:#f5f8f5;color:#182c36;border:2px solid #40545a;border-radius:13px;padding:8px;z-index:4;box-shadow:0 5px 13px #0003}.hpbox.e{right:4%;top:9%}.hpbox.a{left:4%;bottom:9%}.hpbar{height:8px;background:#ccd5d0;border-radius:8px;overflow:hidden;margin-top:5px}.hpbar i{display:block;height:100%;background:var(--green);width:100%;transition:.25s}.hpnum{text-align:right;font-size:9px;color:#56656b;margin-top:2px}.battleUI{position:absolute;left:0;right:0;bottom:0;background:#081522f2;padding:12px;z-index:5}.log{min-height:40px;font-size:13px;line-height:1.45}.moves{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.move{border:1px solid #45627d;background:#14283f;color:#fff;border-radius:11px;padding:10px;text-align:left;font-weight:900}.move small{display:block;color:#9bb0c3;font-size:9px;margin-top:3px}.move:disabled{opacity:.45}.battleBtns{display:flex;gap:7px;margin-bottom:7px}.battleBtns button{border:1px solid #45627d;background:#10243a;color:#e5edf5;border-radius:10px;padding:7px 9px;font-weight:900}
+.menuGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.menuBtn{padding:18px;border:1px solid #304b67;background:#102035;color:#fff;border-radius:15px;text-align:left;font-weight:950}.menuBtn small{display:block;color:var(--muted);font-weight:500;margin-top:4px}
+.teamList{display:grid;gap:9px}.teamRow{display:grid;grid-template-columns:60px 1fr auto;gap:10px;align-items:center;padding:12px;background:#101f33;border:1px solid #2b4762;border-radius:14px}.teamRow .big{font-size:42px;text-align:center}.tag{display:inline-block;font-size:9px;padding:3px 6px;border-radius:7px;background:#1b344d;color:#b7d1e3}.teamRow small{display:block;color:var(--muted);margin-top:4px}.bar{height:6px;background:#293747;border-radius:8px;overflow:hidden;margin-top:5px}.bar i{display:block;height:100%;background:var(--green)}
+.modal{position:fixed;inset:0;background:#020812e8;display:grid;place-items:center;padding:18px;z-index:30}.modal.hide{display:none}.dialog{width:min(94vw,440px);background:#0d1c2e;border:1px solid #385672;border-radius:20px;padding:20px;box-shadow:0 30px 90px #000}.dialog p{white-space:pre-line;color:#a9bbcb;line-height:1.7;margin:8px 0 15px}
+.nav{display:flex;gap:7px;margin-top:10px}.nav button{flex:1;border:1px solid #2b4662;background:#0e1d30;color:#bdcddd;border-radius:11px;padding:10px;font-weight:900}
+@media(max-width:700px){.world{grid-template-columns:1fr}.map{height:430px}.side{grid-template-columns:1fr 1fr}.side .quest{grid-column:span 2}.hero h1{font-size:31px}.arena{height:540px}}
+@media(max-width:520px){.grid3{grid-template-columns:1fr}.starter{display:grid;grid-template-columns:72px 1fr;align-items:center}.sprite{font-size:48px}.side{grid-template-columns:1fr}.side .quest{grid-column:auto}.map{height:410px}.arena{height:500px}.fighter{font-size:62px}.hpbox{width:47%}}
+</style></head><body>
 <div class="app">
-<header class="top"><div class="logo">MONSTER <span>FRONTIER</span></div><div class="money">₿ <span id="money">1200</span></div></header>
+<header class="top"><div class="brand">MONSTER <i>FRONTIER</i> // ORIGIN</div><div class="stats"><div class="stat gold">₿ <span id="money">1200</span></div><div class="stat">⭐ <span id="badge">0</span>/8</div></div></header>
 
-<section id="start" class="screen on">
- <div class="hero"><div class="eyebrow">ORIGINAL MONSTER RPG</div><h1>モンスターと、旅に出よう。</h1><p>町を巡り、野生モンスターと戦い、仲間にして育てる。<br>タイプ相性と技を使い分けて、フロンティアリーグを目指せ。</p></div>
- <div class="panel" style="margin-top:12px"><h3>最初のパートナーを選ぶ</h3><p style="color:var(--muted);font-size:12px;margin-top:4px">炎・水・草。旅の最初の一体は慎重に。</p><div class="cards" id="starters"></div><button class="primary" id="startJourney">このモンスターと旅を始める</button></div>
+<section id="title" class="screen on">
+<div class="hero"><div class="eyebrow">ORIGINAL CREATURE ADVENTURE</div><h1>モンスターと、世界を旅する。</h1><p>8つの街、8人のジムリーダー、野生モンスター、捕獲、育成、進化、ライバル。あなた自身の旅を始めよう。</p></div>
+<div class="panel section"><h3>最初のパートナー</h3><p class="muted" style="font-size:12px;margin-top:4px">3体から1体を選択。あとで出会う仲間とは別の特別な個体です。</p><div class="grid3" id="starters" style="margin-top:12px"></div><button class="primary" id="begin">このパートナーで冒険を始める</button></div>
 </section>
 
 <section id="world" class="screen">
- <div class="panel"><h2>フロンティア地方</h2><p style="color:var(--muted);font-size:12px;margin-top:4px">行き先を選び、探索しよう。</p>
-  <div class="map"><div class="sun"></div><div class="road"></div><div class="town lab">🔬 研究所</div><div class="town shop">🏪 ショップ</div><div class="town gym">🏆 ジム</div><div class="player">🧢</div></div>
-  <div class="map-controls"><button id="wild">🌿 草むらを探索</button><button id="heal">🏥 回復</button><button id="teamOpen">🎒 手持ち</button><button id="shop">🛒 ショップ</button></div>
- </div>
-</section>
-
-<section id="battle" class="screen">
- <div class="battle panel"><div class="arena"><div class="sun"></div><div class="platform enemy"></div><div class="platform"></div>
-  <div class="hpbox enemy"><b id="enemyName"></b><span id="enemyLv"></span><div class="hpbar"><i id="enemyHp"></i></div><div class="hptext" id="enemyHpText"></div></div>
-  <div class="fighter enemy-f" id="enemySprite">🦊</div>
-  <div class="hpbox ally"><b id="allyName"></b><span id="allyLv"></span><div class="hpbar"><i id="allyHp"></i></div><div class="hptext" id="allyHpText"></div></div>
-  <div class="fighter ally-f" id="allySprite">🌱</div>
-  <div class="battle-log"><p id="battleText">野生モンスターが現れた！</p><div class="battle-tools"><button id="catchBtn">🔴 キャプチャ</button><button id="runBtn">🏃 にげる</button></div><div class="moves" id="moves"></div></div>
- </div></div>
-</section>
-
-<section id="team" class="screen"><div class="panel"><h2>🎒 手持ちモンスター</h2><div id="teamList" class="team" style="margin-top:12px"></div></div></section>
-
-<div class="nav"><button data-nav="world">🗺 ワールド</button><button data-nav="team">🎒 手持ち</button><button id="saveBtn">💾 セーブ</button></div>
+<div class="world">
+<div class="panel"><h2 id="townName">アステラ村</h2><p class="muted" style="font-size:12px;margin:4px 0 10px">フロンティア地方・第1エリア</p>
+<div class="map"><div class="sun"></div><div class="route"></div><div class="place p1">🏠 研究所</div><div class="place p2">🏪 ショップ</div><div class="place p3">🏆 ジム</div><div class="place p4">🌲 森</div><div class="heroNpc" id="heroNpc">🧢</div><div class="mapHint">🌲 森へ進むと野生モンスターが出現します。🏆 ジムではボス戦。</div></div></div>
+<div class="side"><div class="quest"><b>📜 メインクエスト</b><p id="quest">最初のジムリーダーを倒し、バッジを手に入れよう。</p></div>
+<div class="panel"><h3>行動</h3><div class="actions" style="margin-top:8px"><button id="explore">🌲 森を探索 <span>戦闘</span></button><button id="gym">🏆 ジムに挑戦 <span>ボス</span></button><button id="shop">🏪 ショップ <span>買う</span></button><button id="heal">🏠 研究所で回復 <span>無料</span></button><button id="rival">⚔️ ライバルと遭遇 <span>強敵</span></button></div></div>
+<div class="panel"><h3>パーティ</h3><div class="miniTeam" id="miniTeam" style="margin-top:8px"></div></div></div>
 </div>
-<div id="modal" class="modal hide"><div class="dialog"><h2 id="modalTitle"></h2><p id="modalText"></p><div class="grid"><button class="primary" id="modalOk">OK</button></div></div></div>
-<div id="toast" class="toast"></div>
+</section>
+
+<section id="battle" class="screen"><div class="panel battle"><div class="arena"><div class="sun"></div><div class="plat e"></div><div class="plat"></div>
+<div class="hpbox e"><b id="en"></b> <span id="el"></span><div class="hpbar"><i id="eh"></i></div><div class="hpnum" id="et"></div></div><div class="fighter ef" id="es"></div>
+<div class="hpbox a"><b id="an"></b> <span id="al"></span><div class="hpbar"><i id="ah"></i></div><div class="hpnum" id="at"></div></div><div class="fighter af" id="as"></div>
+<div class="battleUI"><div class="log" id="log">野生モンスターが現れた！</div><div class="battleBtns"><button id="catch">🔴 捕獲</button><button id="run">🏃 逃げる</button><button id="switch">🔄 交代</button></div><div class="moves" id="moves"></div></div>
+</div></div></section>
+
+<section id="team" class="screen"><div class="panel"><h2>🎒 モンスター図鑑 / パーティ</h2><p class="muted" style="font-size:12px;margin:4px 0 12px">捕まえた仲間を管理できます。</p><div class="teamList" id="teamList"></div></div></section>
+
+<section id="menu" class="screen"><div class="panel"><h2>⚙️ メニュー</h2><div class="menuGrid" style="margin-top:12px"><button class="menuBtn" id="save">💾 セーブ<small>ブラウザに進行状況を保存</small></button><button class="menuBtn" id="reset">🗑 最初から<small>全セーブデータを削除</small></button></div></div></section>
+
+<nav class="nav"><button data-go="world">🗺 世界</button><button data-go="team">🎒 パーティ</button><button data-go="menu">⚙️ メニュー</button></nav>
+</div>
+<div class="modal hide" id="modal"><div class="dialog"><h2 id="mt"></h2><p id="mx"></p><button class="primary" id="mok">OK</button></div></div>
 
 <script>
-const SPEC={
- ember:{name:"フレイノ",icon:"🦊",type:"炎",color:"#ff704d",base:40,moves:[["フレアバイト","炎",14],["ひっかき","無",10],["ヒートアップ","炎",18],["突進","無",12]]},
- aqua:{name:"ミズモ",icon:"🦦",type:"水",base:42,moves:[["アクアショット","水",14],["たいあたり","無",10],["ウォーターブレード","水",18],["泡ラッシュ","水",16]]},
- leaf:{name:"リーフィン",icon:"🦎",type:"草",base:41,moves:[["リーフカッター","草",14],["しっぽ打ち","無",10],["つるブレード","草",18],["森の息吹","草",16]]},
- spark:{name:"スパルク",icon:"🐿️",type:"雷",base:39,moves:[["スパーク","雷",15],["かみつく","無",10],["雷撃","雷",19],["でんこうせっか","無",13]]},
- frost:{name:"フロスティ",icon:"🐺",type:"氷",base:43,moves:[["アイスニードル","氷",15],["かみつく","無",10],["フロストレイ","氷",20],["雪煙","氷",14]]},
+const M={
+ ember:{n:"フレイノ",i:"🦊",t:"炎",base:44,m:[["フレアバイト","炎",16],["ひっかき","無",11],["ヒートランス","炎",21],["灼熱波","炎",25]]},
+ aqua:{n:"ミズモ",i:"🦦",t:"水",base:45,m:[["アクアショット","水",16],["たいあたり","無",11],["タイダルカット","水",21],["泡嵐","水",24]]},
+ leaf:{n:"リーフィン",i:"🦎",t:"草",base:43,m:[["リーフカッター","草",16],["しっぽ打ち","無",11],["つるブレード","草",21],["森の息吹","草",24]]},
+ spark:{n:"スパルク",i:"🐿️",t:"雷",base:42,m:[["スパーク","雷",17],["かみつく","無",11],["雷撃","雷",23],["電光石火","無",20]]},
+ frost:{n:"フロスティ",i:"🐺",t:"氷",base:46,m:[["アイスニードル","氷",17],["かみつく","無",11],["フロストレイ","氷",23],["雪煙","氷",22]]},
+ bloom:{n:"ブロッサ",i:"🐰",t:"草",base:47,m:[["花弾","草",18],["体当たり","無",11],["花嵐","草",25],["光合成","草",0]]},
 };
-const wildPool=["ember","aqua","leaf","spark","frost"];
-let selected="ember",team=[],enemy=null,busy=false,money=1200;
-const $=id=>document.getElementById(id);
-const types={炎:{草:1.5,水:.7,炎:.7},水:{炎:1.5,草:.7,雷:.7},草:{水:1.5,炎:.7,草:.7},雷:{水:1.5,草:.7,雷:.7},氷:{草:1.5,水:.8},無:{}};
-function save(){localStorage.setItem("mf-save",JSON.stringify({team,money}));toast("セーブしました")}
-function load(){try{const d=JSON.parse(localStorage.getItem("mf-save"));if(d&&d.team?.length){team=d.team;money=d.money??1200;return true}}catch(e){}return false}
-function monster(id,lv=5){let s=SPEC[id];let hp=s.base+lv*5;return {id,lv,xp:0,hp,max:hp};}
-function renderStarters(){ $("starters").innerHTML=["ember","aqua","leaf"].map(id=>{let s=SPEC[id];return '<div class="card '+(id===selected?"active":"")+'" data-id="'+id+'"><div class="monster">'+s.icon+'</div><div><b>'+s.name+'</b><small>'+s.type+'タイプ</small></div></div>'}).join("");document.querySelectorAll(".card").forEach(c=>c.onclick=()=>{selected=c.dataset.id;renderStarters()})}
-function show(id){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("on"));$(id).classList.add("on");if(id==="team")renderTeam()}
-function start(){team=[monster(selected,5)];save();show("world");toast(SPEC[selected].name+"が仲間になった！")}
-function active(){return team[0]}
-function renderTeam(){$("teamList").innerHTML=team.map((m,i)=>{let s=SPEC[m.id];return '<div class="team-row"><div class="icon">'+s.icon+'</div><div><b>'+s.name+'</b> <span class="tag">'+s.type+'</span><small>Lv.'+m.lv+'　HP '+m.hp+'/'+m.max+'　XP '+m.xp+'/100</small></div><b>#'+(i+1)+'</b></div>'}).join("")}
-function randomEnemy(){let id=wildPool[Math.floor(Math.random()*wildPool.length)],lv=Math.max(3,active().lv+Math.floor(Math.random()*3)-1);enemy=monster(id,lv);busy=false;show("battle");renderBattle();battleText("野生の"+SPEC[id].name+"が現れた！")}
-function renderBattle(){let a=active(),as=SPEC[a.id],es=SPEC[enemy.id];$("allyName").textContent=as.name;$("allyLv").textContent=" Lv."+a.lv;$("allySprite").textContent=as.icon;$("enemyName").textContent=es.name;$("enemyLv").textContent=" Lv."+enemy.lv;$("enemySprite").textContent=es.icon;updateHp();$("moves").innerHTML=as.moves.map((m,i)=>'<button class="move" data-i="'+i+'">'+m[0]+'<small>'+m[1]+' / 威力 '+m[2]+'</small></button>').join("");document.querySelectorAll(".move").forEach(b=>b.onclick=()=>attack(+b.dataset.i))}
-function updateHp(){$("allyHp").style.width=Math.max(0,active().hp/active().max*100)+"%";$("enemyHp").style.width=Math.max(0,enemy.hp/enemy.max*100)+"%";$("allyHpText").textContent=active().hp+"/"+active().max;$("enemyHpText").textContent=enemy.hp+"/"+enemy.max}
-function battleText(t){$("battleText").textContent=t}
-function mult(att,def){return types[att]?.[def]??1}
-function attack(i){if(busy||enemy.hp<=0)return;busy=true;let a=active(),m=SPEC[a.id].moves[i],d=Math.max(1,Math.round(m[2]*(a.lv/5)*(mult(m[1],SPEC[enemy.id].type))*(.85+Math.random()*.3)));enemy.hp=Math.max(0,enemy.hp-d);updateHp();let eff=mult(m[1],SPEC[enemy.id].type);battleText(a.name+"の"+m[0]+"！ "+d+"ダメージ"+(eff>1?" 効果はばつぐん！":eff<1?" あまり効いていない…":""));if(enemy.hp<=0){setTimeout(victory,500);return}setTimeout(enemyAttack,650)}
-function enemyAttack(){if(enemy.hp<=0)return;let es=SPEC[enemy.id],m=es.moves[Math.floor(Math.random()*es.moves.length)],a=active(),d=Math.max(1,Math.round(m[2]*(enemy.lv/5)*(mult(m[1],SPEC[a.id].type))*(.85+Math.random()*.3)));a.hp=Math.max(0,a.hp-d);updateHp();let eff=mult(m[1],SPEC[a.id].type);battleText("野生の"+es.name+"の"+m[0]+"！ "+d+"ダメージ");if(a.hp<=0){a.hp=1;busy=false;showModal("戦闘不能",""+a.name+"は倒れた！","研究所で回復して、もう一度挑戦しよう。");setTimeout(()=>{heal();show("world")},1000)}else busy=false}
-function victory(){let a=active(),gain=35+enemy.lv*8;a.xp+=gain;money+=20;while(a.xp>=100){a.xp-=100;a.lv++;a.max+=5;a.hp=a.max;toast(a.name+"はLv."+a.lv+"になった！")}save();busy=false;battleText(enemy?SPEC[enemy.id].name+"を倒した！ EXP "+gain+" / ₿ +20":"勝利！");setTimeout(()=>show("world"),900)}
-function catchEnemy(){if(busy||enemy.hp<=0)return;busy=true;let chance=.25+(1-enemy.hp/enemy.max)*.6;if(Math.random()<chance){if(team.length>=6){busy=false;toast("手持ちは6体まで！");return}team.push({...enemy});save();showModal("キャプチャ成功！",SPEC[enemy.id].name+"が仲間になった！","手持ちに加わりました。");setTimeout(()=>{ $("modal").classList.add("hide");show("world")},700)}else{battleText("キャプチャに失敗した！");setTimeout(enemyAttack,500)}}
-function heal(){team.forEach(m=>{m.hp=m.max});save();toast("手持ちが全回復した！")}
-function shop(){if(money<100){toast("お金が足りない");return}money-=100;team.forEach(m=>m.hp=Math.min(m.max,m.hp+20));save();toast("回復アイテムを使った！")}
-function showModal(t,x,y){$("modalTitle").textContent=t;$("modalText").textContent=x+"\n"+y;$("modal").classList.remove("hide")}
-function toast(t){$("toast").textContent=t;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),1800)}
-document.querySelectorAll("[data-nav]").forEach(b=>b.onclick=()=>show(b.dataset.nav));$("startJourney").onclick=start;$("wild").onclick=randomEnemy;$("heal").onclick=heal;$("shop").onclick=shop;$("teamOpen").onclick=()=>show("team");$("catchBtn").onclick=catchEnemy;$("runBtn").onclick=()=>{if(!busy){show("world");toast("無事に逃げ切った！")}};$("saveBtn").onclick=save;$("modalOk").onclick=()=>$("modal").classList.add("hide");
-if(!load()){renderStarters()}else{selected=team[0].id;show("world")} $("money").textContent=money;
-setInterval(()=>{$("money").textContent=money},300);
-</script>
-</body>
-</html>
+const pool=["ember","aqua","leaf","spark","frost","bloom"], starters=["ember","aqua","leaf"];
+const chart={炎:{草:1.5,水:.7,炎:.7},水:{炎:1.5,草:.7,雷:.7},草:{水:1.5,炎:.7,草:.7},雷:{水:1.5,草:.7,雷:.7},氷:{草:1.5,水:.8},無:{}};
+let state={started:false,team:[],active:0,money:1200,badges:0,town:0},enemy=null,busy=false,mode="wild";
+const $=x=>document.getElementById(x);
+function mon(id,lv=5){let s=M[id],max=s.base+lv*6;return{id,lv,xp:0,hp:max,max,catch:0}}
+function save(silent=false){localStorage.setItem("mf-origin",JSON.stringify(state));if(!silent)alertMsg("セーブ完了","旅の進行状況を保存しました。")}
+function load(){try{let x=JSON.parse(localStorage.getItem("mf-origin"));if(x?.team?.length){state=x;return true}}catch(e){}return false}
+function alertMsg(t,x){$("mt").textContent=t;$("mx").textContent=x;$("modal").classList.remove("hide")}
+function hide(){ $("modal").classList.add("hide") }
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));$(id).classList.add("on");renderAll()}
+function active(){return state.team[state.active]}
+function renderStarters(){$("starters").innerHTML=starters.map(id=>{let s=M[id];return '<button class="starter '+(id===selected?"sel":"")+'" data-s="'+id+'"><div class="sprite">'+s.i+'</div><div><b>'+s.n+'</b><small>'+s.t+'タイプ</small></div></button>'}).join("");document.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{selected=b.dataset.s;renderStarters()})}
+let selected="ember";
+function begin(){state={started:true,team:[mon(selected,5)],active:0,money:1200,badges:0,town:0};save(true);show("world");alertMsg("旅の始まり","研究所を出て、最初のジムを目指そう。")}
+function renderTeam(){ $("teamList").innerHTML=state.team.map((x,i)=>{let s=M[x.id];return '<div class="teamRow"><div class="big">'+s.i+'</div><div><b>'+s.n+'</b> <span class="tag">'+s.t+'</span><small>Lv.'+x.lv+'　HP '+x.hp+'/'+x.max+'　EXP '+x.xp+'/100</small><div class="bar"><i style="width:'+x.hp/x.max*100+'%"></i></div></div><b>#'+(i+1)+'</b></div>'}).join("")}
+function renderMini(){$("miniTeam").innerHTML=state.team.map((x,i)=>{let s=M[x.id];return '<div class="mini"><div class="ic">'+s.i+'</div><div><b>'+s.n+'</b><small>Lv.'+x.lv+'　'+x.hp+'/'+x.max+'</small><div class="hp"><i style="width:'+x.hp/x.max*100+'%"></i></div></div><small>#'+(i+1)+'</small></div>'}).join("")}
+function renderAll(){$("money").textContent=state.money;$("badge").textContent=state.badges;renderMini();renderTeam()}
+function randomEnemy(lv=active().lv){let id=pool[Math.floor(Math.random()*pool.length)];enemy=mon(id,Math.max(3,lv+Math.floor(Math.random()*3)-1));mode="wild";show("battle");renderBattle();log("野生の"+M[id].n+"が現れた！")}
+function renderBattle(){let a=active(),as=M[a.id],es=M[enemy.id];$("an").textContent=as.n;$("al").textContent=" Lv."+a.lv;$("as").textContent=as.i;$("en").textContent=es.n;$("el").textContent=" Lv."+enemy.lv;$("es").textContent=es.i;updateHP();$("moves").innerHTML=as.m.map((m,i)=>'<button class="move" data-m="'+i+'">'+m[0]+'<small>'+m[1]+' / 威力 '+(m[2]||"回復")+'</small></button>').join("");document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>attack(+b.dataset.m))}
+function updateHP(){$("ah").style.width=Math.max(0,active().hp/active().max*100)+"%";$("eh").style.width=Math.max(0,enemy.hp/enemy.max*100)+"%";$("at").textContent=active().hp+"/"+active().max;$("et").textContent=enemy.hp+"/"+enemy.max}
+function log(t){$("log").textContent=t}
+function mult(a,d){return chart[a]?.[d]??1}
+function attack(i){if(busy||enemy.hp<=0)return;busy=true;let a=active(),move=M[a.id].m[i];if(move[2]===0){a.hp=Math.min(a.max,a.hp+Math.round(a.max*.28));log(a.n+"は"+move[0]+"で回復した！");updateHP();setTimeout(enemyTurn,650);return}let eff=mult(move[1],M[enemy.id].t),d=Math.max(1,Math.round(move[2]*(a.lv/5)*eff*(.88+Math.random()*.24)));enemy.hp=Math.max(0,enemy.hp-d);updateHP();log(a.n+"の"+move[0]+"！ "+d+"ダメージ"+(eff>1?"　効果ばつぐん！":eff<1?"　あまり効かない…":""));if(enemy.hp<=0)setTimeout(winBattle,600);else setTimeout(enemyTurn,650)}
+function enemyTurn(){if(enemy.hp<=0)return;let e=M[enemy.id],move=e.m[Math.floor(Math.random()*e.m.length)],a=active();if(move[2]===0){busy=false;return}let eff=mult(move[1],M[a.id].t),d=Math.max(1,Math.round(move[2]*(enemy.lv/5)*eff*(.88+Math.random()*.24)));a.hp=Math.max(0,a.hp-d);updateHP();log("野生の"+e.n+"の"+move[0]+"！ "+d+"ダメージ");if(a.hp<=0){a.hp=1;busy=false;state.active=firstAlive();save(true);show("world");alertMsg("戦闘終了",a.n+"は倒れた。研究所で回復しよう。")}else busy=false}
+function firstAlive(){let i=state.team.findIndex(x=>x.hp>0);return i<0?0:i}
+function winBattle(){let a=active(),gain=25+enemy.lv*12;a.xp+=gain;state.money+=30;while(a.xp>=100){a.xp-=100;a.lv++;a.max+=7;a.hp=a.max;alertMsg("レベルアップ！",a.n+"はLv."+a.lv+"になった！")}save(true);busy=false;log(M[enemy.id].n+"に勝利！ EXP "+gain+" / ₿ +30");setTimeout(()=>show("world"),900)}
+function catchIt(){if(busy||enemy.hp<=0||mode==="gym")return;busy=true;if(state.team.length>=6){busy=false;alertMsg("パーティ満員","最大6体までです。");return}let chance=.22+(1-enemy.hp/enemy.max)*.65;if(Math.random()<chance){state.team.push({...enemy});save(true);busy=false;alertMsg("捕獲成功！",M[enemy.id].n+"が仲間になった！")}else{log("キャプチャに失敗した！");setTimeout(enemyTurn,600)}}
+function run(){if(!busy){busy=false;show("world")}}
+function switchMon(){if(busy||state.team.length<2)return;state.active=(state.active+1)%state.team.length;if(active().hp<=0)state.active=firstAlive();renderBattle();log("出すモンスターを交代した！")}
+function explore(){randomEnemy(active().lv)}
+function heal(){state.team.forEach(x=>x.hp=x.max);save(true);alertMsg("回復","パーティ全員のHPが全回復した！")}
+function buy(){if(state.money<100){alertMsg("お金が足りない","100₿必要です。");return}state.money-=100;state.team.forEach(x=>x.hp=Math.min(x.max,x.hp+35));save(true);alertMsg("購入","回復アイテムを使った！")}
+function gym(){mode="gym";let id=["spark","frost","bloom","ember","aqua"][state.badges%5];enemy=mon(id,active().lv+3+state.badges);show("battle");renderBattle();log("ジムリーダーの"+M[id].n+"が勝負を仕掛けてきた！");$("catch").disabled=true}
+function rival(){mode="rival";let id=starters[(state.badges+1)%3];enemy=mon(id,active().lv+2);show("battle");renderBattle();log("ライバルが"+M[id].n+"を繰り出した！");$("catch").disabled=true}
+function winGym(){if(mode!=="gym")return;state.badges=Math.min(8,state.badges+1);state.money+=250;save(true);alertMsg("ジムバッジ獲得！","第"+state.badges+"バッジを手に入れた！
+報酬 +250₿");show("world")}
+const oldWin=winBattle;
+winBattle=function(){if(mode==="gym"){state.money+=250;state.badges=Math.min(8,state.badges+1);save(true);busy=false;log("ジムリーダー撃破！");setTimeout(()=>{alertMsg("ジムバッジ獲得！","第"+state.badges+"バッジを手に入れた！");show("world")},600);return}oldWin()}
+function resetGame(){if(confirm("セーブデータを削除して最初から始めますか？")){localStorage.removeItem("mf-origin");location.reload()}}
+$("begin").onclick=begin;$("explore").onclick=explore;$("gym").onclick=gym;$("shop").onclick=buy;$("heal").onclick=heal;$("rival").onclick=rival;$("catch").onclick=catchIt;$("run").onclick=run;$("switch").onclick=switchMon;$("save").onclick=()=>save();$("reset").onclick=resetGame;$("mok").onclick=hide;
+document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>show(b.dataset.go));
+if(load()){selected=state.team[0].id;show("world")}else renderStarters();renderAll();
+</script></body></html>
