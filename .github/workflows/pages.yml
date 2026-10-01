@@ -33,7 +33,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "."
+          # Cache-bust: deploy the repository root exactly as the latest main commit\n          path: "."
 
       - name: Deploy to GitHub Pages
         id: deployment
