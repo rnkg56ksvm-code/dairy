@@ -114,10 +114,17 @@ async async function saveDiary(i){
 }
 
 function timeline(){
-  let a=data.diary.slice().sort((x,y)=>(x.date+x.time).localeCompare(y.date+y.time));
+  const ev=[];
+  data.diary.forEach(x=>ev.push({date:x.date,time:x.time||"",kind:"✍️",title:x.title||"無題",body:x.body||""}));
+  data.schedule.forEach(x=>ev.push({date:x.date,time:x.time||"",kind:"📅",title:x.title||"予定",body:[x.place,x.note].filter(Boolean).join(" · ")}));
+  data.food.forEach(x=>ev.push({date:x.date,time:"",kind:"🍴",title:x.name||"食事",body:[x.dish,x.note].filter(Boolean).join(" · ")}));
+  data.places.forEach(x=>ev.push({date:x.date,time:"",kind:"📍",title:x.name||"場所",body:x.note||""}));
+  data.money.forEach(x=>ev.push({date:x.date,time:"",kind:"💵",title:x.name||"支出",body:(x.category||"その他")+" · $"+Number(x.amount||0).toFixed(2)}));
+  let a=ev.sort((x,y)=>(x.date+x.time).localeCompare(y.date+y.time));
   if(filter)a=a.filter(x=>(x.title+" "+x.body).toLowerCase().includes(filter.toLowerCase()));
-  return '<div class="card"><div class="hero">🕐 タイムライン</div>'+searchBox("タイムラインを検索")+'</div><div class="timeline">'+(a.length?a.map(x=>'<div class="event"><div class="muted">'+fmt(x.date)+' '+esc(x.time||"")+'</div><b>'+esc(x.title||"無題")+'</b><p>'+esc(x.body||"").slice(0,220).replace(/\\n/g,"<br>")+'</p></div>').join(""):'<div class="empty">記録すると時系列で表示されます。</div>')+'</div>';
+  return '<div class="card"><div class="hero">🕐 タイムライン</div>'+searchBox("日記・予定・食事・場所・支出を検索")+'</div><div class="timeline">'+(a.length?a.map(x=>'<div class="event"><div class="muted">'+fmt(x.date)+' '+esc(x.time||"")+'</div><b>'+x.kind+' '+esc(x.title)+'</b><p>'+esc(x.body).slice(0,220).replace(/\\n/g,"<br>")+'</p></div>').join(""):'<div class="empty">記録すると時系列で表示されます。</div>')+'</div>';
 }
+
 function photos(){
   let a=allPhotos().slice().reverse();
   if(filter)a=a.filter(p=>p.date.includes(filter));
