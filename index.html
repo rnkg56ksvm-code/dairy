@@ -51,8 +51,192 @@ input,textarea,select{border:1px solid #bfe3df!important;border-radius:12px!impo
 </style><style>
 .searchrow{display:flex;gap:6px;margin-top:14px}.searchrow input{flex:1;padding:10px;border:1px solid #d6e0e3;border-radius:10px}.filterline{display:flex;align-items:center;gap:7px;margin-top:10px}.filterline input{padding:8px;border:1px solid #d6e0e3;border-radius:10px}.entry{border-top:1px solid #edf1f2;padding:15px 0}.entry:first-child{border-top:0}.dayRow{display:grid;grid-template-columns:60px 75px 1fr;gap:8px;align-items:center;padding:12px 8px;border-top:1px solid #edf1f2;cursor:pointer}.dayRow.current{background:#eaf7f6;border-radius:10px}.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;cursor:pointer}.price{font-size:18px;font-weight:800;margin-top:6px}.catGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.heroCard{background:linear-gradient(145deg,#fff,#edf9f8)}select{width:100%;padding:11px;border:1px solid #d6e0e3;border-radius:12px;background:white}.photoWrap{position:relative}.photoWrap .mini{position:absolute;right:3px;top:3px;padding:3px 8px;border-radius:99px}.lightbox{position:fixed;inset:0;background:#000d;z-index:20;display:flex;align-items:center;justify-content:center;padding:15px}.lightbox img{max-width:100%;max-height:90vh;object-fit:contain}.lightbox button{position:absolute;right:18px;top:18px;border-radius:50%;font-size:24px;width:45px;height:45px;padding:0}.editOld{margin-top:10px}
 @media(max-width:420px){.dayRow{grid-template-columns:52px 70px 1fr}.catGrid{grid-template-columns:1fr}.searchrow{flex-wrap:wrap}.searchrow input{min-width:100%}}
-.photoNav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;padding:0;font-size:22px}.photoPrev{left:12px}.photoNext{right:12px}</style><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"></head><body>
-<header><div class="wrap"><h1>🌺 Hawaii 2026</h1><div style="font-size:11px;opacity:.8;margin-top:3px">Build 2026-10-01.12</div><p>Oahu · 2026/10/1 — 10/5 · 2人</p><div class="stats"><div class="stat"><b id="day">DAY 1</b><span>旅行日</span></div><div class="stat"><b id="entries">0</b><span>日記</span></div><div class="stat"><b id="photos">0</b><span>写真</span></div></div></div></header>
+.photoNav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;padding:0;font-size:22px}.photoPrev{left:12px}.photoNext{right:12px}</style><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"><style>
+/* OAHU UI/UX POLISH 2026.10.01.13 */
+:root{
+  --ocean:#007f95;--deep:#005b70;--aqua:#18b8b0;--foam:#f7ffff;
+  --sand:#fff4dc;--sun:#f6a43a;--coral:#ef765f;--ink:#163f4b;
+}
+body{
+  background:linear-gradient(180deg,#dff8fc 0%,#f7ffff 38%,#fff8e9 100%)!important;
+  color:var(--ink)!important;
+}
+body:after{
+  content:"";position:fixed;left:-8%;right:-8%;bottom:-55px;height:110px;
+  background:rgba(255,255,255,.72);border-radius:50% 50% 0 0/100% 100% 0 0;
+  pointer-events:none;z-index:-1;
+}
+header{
+  min-height:205px!important;
+  padding:30px 18px 32px!important;
+  background:
+    radial-gradient(circle at 88% 18%,rgba(255,220,135,.95) 0 24px,rgba(255,220,135,.25) 25px 48px,transparent 49px),
+    linear-gradient(160deg,#005d78 0%,#008fa3 43%,#19b9ae 72%,#f4b05d 100%)!important;
+  border-radius:0 0 42px 42px!important;
+  box-shadow:0 14px 35px rgba(0,91,112,.22)!important;
+  overflow:hidden;
+}
+header:before{
+  content:"ALOHA • OʻAHU • WAIKIKI"!important;
+  letter-spacing:.28em!important;font-size:10px!important;
+  opacity:.88!important;margin-bottom:10px!important;
+}
+header:after{
+  content:"🌴  🌺  🌊  🌴"!important;
+  right:12px!important;bottom:-2px!important;
+  font-size:38px!important;opacity:.34!important;
+  white-space:nowrap;
+}
+header h1{
+  font-size:36px!important;line-height:1.05!important;
+  letter-spacing:.015em!important;
+  text-shadow:0 3px 12px rgba(0,58,75,.28)!important;
+}
+header p{font-weight:600!important;letter-spacing:.02em}
+.stats{margin-top:20px!important;gap:9px!important}
+.stat{
+  padding:10px 7px!important;border-radius:16px!important;
+  background:rgba(255,255,255,.16)!important;
+  border:1px solid rgba(255,255,255,.28)!important;
+  backdrop-filter:blur(8px);
+}
+.stat b{font-size:20px!important}
+.stat span{font-size:11px!important;opacity:.9}
+
+.nav{
+  top:7px!important;margin:10px 10px 4px!important;
+  padding:5px!important;border-radius:20px!important;
+  background:rgba(255,255,255,.86)!important;
+  backdrop-filter:blur(18px)!important;
+  box-shadow:0 7px 24px rgba(0,91,112,.13)!important;
+  border:1px solid rgba(255,255,255,.9)!important;
+  scrollbar-width:none;
+}
+.nav::-webkit-scrollbar{display:none}
+.nav button{
+  min-height:43px!important;padding:9px 13px!important;
+  margin:0 2px!important;border-radius:14px!important;
+  color:#52747d!important;font-size:13px!important;
+  transition:transform .15s ease,background .15s ease!important;
+}
+.nav button.active{
+  color:#fff!important;
+  background:linear-gradient(135deg,var(--aqua),var(--ocean))!important;
+  box-shadow:0 5px 14px rgba(0,127,149,.25)!important;
+}
+.nav button:active{transform:scale(.96)}
+
+.content{padding-top:17px!important}
+.card{
+  padding:18px!important;margin-bottom:15px!important;
+  border-radius:24px!important;
+  background:rgba(255,255,255,.94)!important;
+  border:1px solid rgba(170,224,221,.48)!important;
+  box-shadow:0 9px 28px rgba(0,91,112,.09)!important;
+}
+.hero{
+  color:var(--deep)!important;
+  font-size:23px!important;
+  letter-spacing:-.02em;
+}
+.heroCard{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#ffffff 0%,#effcfb 56%,#fff1d8 100%)!important;
+}
+.heroCard:after{
+  content:"ALOHA";position:absolute;right:-9px;top:8px;
+  font-size:58px;font-weight:900;font-style:italic;
+  color:rgba(24,184,176,.07);transform:rotate(-8deg);
+  pointer-events:none;
+}
+.info{
+  background:linear-gradient(145deg,#f7ffff,#eefaf8)!important;
+  border:1px solid #dcefed!important;
+  border-radius:16px!important;
+}
+.dayRow{
+  margin-top:5px;padding:13px 10px!important;
+  border:1px solid transparent!important;
+  border-radius:15px!important;
+}
+.dayRow.current{
+  background:linear-gradient(90deg,#e2f8f5,#fff5df)!important;
+  border-color:#c9ebe6!important;
+  box-shadow:0 4px 12px rgba(0,127,149,.08);
+}
+.dayRow:active{transform:scale(.99)}
+
+.entry{
+  border-top:0!important;
+  border-left:4px solid var(--aqua)!important;
+  padding:14px 12px!important;margin:8px 0!important;
+  border-radius:0 17px 17px 0!important;
+  background:linear-gradient(90deg,#effcfb,#fff)!important;
+}
+.tag{
+  background:#e0f7f4!important;color:#007987!important;
+  font-weight:800!important;border:1px solid #c9ebe7;
+}
+button{
+  min-height:42px!important;
+  background:linear-gradient(135deg,#18b8b0,#007f95)!important;
+  border-radius:14px!important;
+  box-shadow:0 5px 12px rgba(0,127,149,.18)!important;
+}
+button.danger{
+  background:linear-gradient(135deg,#fff,#fff3ef)!important;
+  color:#cf5c4e!important;
+  border:1px solid #f1c7bf!important;
+  box-shadow:none!important;
+}
+button.small{min-height:36px!important}
+input,textarea,select{
+  min-height:44px!important;
+  border-color:#bfe3df!important;
+  box-shadow:inset 0 1px 2px rgba(0,91,112,.03)!important;
+}
+textarea{min-height:135px!important}
+input:focus,textarea:focus,select:focus{
+  outline:none!important;border-color:#18b8b0!important;
+  box-shadow:0 0 0 3px rgba(24,184,176,.13)!important;
+}
+.searchrow{margin-top:16px!important}
+.searchrow input{min-height:42px!important}
+.gallery{gap:9px!important}
+.gallery img,.thumbs img{
+  border-radius:17px!important;
+  box-shadow:0 6px 16px rgba(22,63,75,.13)!important;
+}
+.photoWrap img{border-radius:16px!important}
+.fab{
+  width:64px!important;height:64px!important;
+  right:17px!important;bottom:20px!important;
+  background:linear-gradient(145deg,#f6a43a,#ef765f)!important;
+  box-shadow:0 10px 24px rgba(239,118,95,.4)!important;
+  font-size:28px!important;
+  z-index:8;
+}
+.lightbox{background:rgba(0,35,45,.94)!important}
+.lightbox button{box-shadow:none!important}
+.price,.expense{color:#d57b08!important}
+.empty{
+  padding:32px 18px!important;
+  background:linear-gradient(135deg,#effcfa,#fff6e3)!important;
+  border:1px dashed #bfe3df;
+}
+@media(max-width:600px){
+  header{min-height:190px!important;padding-top:27px!important}
+  header h1{font-size:32px!important}
+  .content{padding-left:12px!important;padding-right:12px!important}
+  .card{padding:16px!important;border-radius:21px!important}
+  .nav button{font-size:12px!important;padding-left:12px!important;padding-right:12px!important}
+}
+@media(min-width:700px){
+  header{padding-left:0!important;padding-right:0!important}
+  .nav{max-width:760px;margin:12px auto 6px!important}
+}
+</style></head><body>
+<header><div class="wrap"><h1>🌺 Hawaii 2026</h1><div style="font-size:11px;opacity:.8;margin-top:3px">Build 2026-10-01.13</div><p>Oahu · 2026/10/1 — 10/5 · 2人</p><div class="stats"><div class="stat"><b id="day">DAY 1</b><span>旅行日</span></div><div class="stat"><b id="entries">0</b><span>日記</span></div><div class="stat"><b id="photos">0</b><span>写真</span></div></div></div></header>
 <nav class="nav" id="nav"><button data-tab="home" class="active">🏝️ ホーム</button><button data-tab="diary">✍️ 日記</button><button data-tab="timeline">🕐 時系列</button><button data-tab="schedule">📅 予定</button><button data-tab="photos">📷 写真</button><button data-tab="food">🍴 食事</button><button data-tab="money">💵 支出</button><button data-tab="info">✈️ 旅行情報</button></nav>
 <main class="wrap content" id="app"></main><button class="fab" id="fab">＋</button>
 <script>
