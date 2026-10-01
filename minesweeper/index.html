@@ -5,116 +5,62 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <title>マインスイーパー</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;background:#0b1220;color:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
-body{min-height:100%;touch-action:manipulation}main{width:min(94vw,460px);margin:0 auto;padding:22px 0 30px;text-align:center}
-h1{margin:0 0 8px;font-size:30px}.sub{margin:0 0 18px;color:#94a3b8;font-size:14px}
-.info{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}.stat{background:#172033;border:1px solid #26344d;border-radius:12px;padding:9px 4px}.stat b{display:block;font-size:20px}.stat span{font-size:11px;color:#94a3b8}
-#board{display:grid;grid-template-columns:repeat(9,1fr);gap:3px;background:#020617;padding:5px;border-radius:14px;user-select:none;-webkit-user-select:none;touch-action:manipulation}
-.cell{min-width:0;aspect-ratio:1;border:0;border-radius:5px;background:#475569;color:#fff;font-size:clamp(16px,5.7vw,24px);font-weight:900;padding:0;touch-action:manipulation;-webkit-touch-callout:none}
-.cell:active{filter:brightness(1.18)}.cell.open{background:#e2e8f0;color:#0f172a}.cell.flag{background:#334155}
-.cell.mine{background:#ef4444}.cell.n1{color:#2563eb}.cell.n2{color:#16a34a}.cell.n3{color:#dc2626}.cell.n4{color:#7c3aed}
-.actions{display:flex;gap:8px;margin-top:14px}.actions button{flex:1;min-height:48px;border:0;border-radius:12px;font-weight:800;font-size:15px}.start{background:#f59e0b;color:#111827}.reset{background:#334155;color:white}
-#status{min-height:22px;margin:12px 0 0;font-weight:700}.hint{color:#94a3b8;font-size:12px;margin-top:7px}
-.modal{position:fixed;inset:0;background:rgba(2,6,23,.72);display:grid;place-items:center;padding:20px;z-index:5}.modal.hidden{display:none}.dialog{width:min(92vw,340px);background:#172033;border:1px solid #334155;border-radius:18px;padding:24px}.dialog h2{margin:0 0 8px}.dialog p{color:#cbd5e1}.dialog button{width:100%;min-height:48px;border:0;border-radius:12px;background:#f59e0b;font-weight:800}
+*{box-sizing:border-box}html,body{margin:0;background:#0b1220;color:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}body{min-height:100%;touch-action:manipulation}
+main{width:min(94vw,520px);margin:0 auto;padding:20px 0 30px;text-align:center}h1{margin:0 0 6px;font-size:29px}.sub{margin:0 0 14px;color:#94a3b8;font-size:13px}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}.level{border:1px solid #334155;background:#172033;color:#cbd5e1;border-radius:11px;padding:9px 3px;font-weight:800;font-size:13px}.level small{display:block;font-size:10px;color:#94a3b8;margin-top:2px}.level.active{background:#f59e0b;color:#111827;border-color:#f59e0b}.level.active small{color:#374151}
+.record{background:#172033;border:1px solid #26344d;border-radius:12px;padding:9px;margin-bottom:12px;font-size:13px}.record b{font-size:17px}.record span{color:#94a3b8}
+.info{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px}.stat{background:#172033;border:1px solid #26344d;border-radius:11px;padding:8px 3px}.stat b{display:block;font-size:19px}.stat span{font-size:10px;color:#94a3b8}
+#board{display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:3px;background:#020617;padding:5px;border-radius:14px;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.cell{min-width:0;aspect-ratio:1;border:0;border-radius:5px;background:#475569;color:#fff;font-size:clamp(13px,5vw,23px);font-weight:900;padding:0;touch-action:manipulation;-webkit-touch-callout:none}.cell:active{filter:brightness(1.18)}.cell.open{background:#e2e8f0;color:#0f172a}.cell.flag{background:#334155}.cell.mine{background:#ef4444}.cell.n1{color:#2563eb}.cell.n2{color:#16a34a}.cell.n3{color:#dc2626}.cell.n4{color:#7c3aed}
+.actions{display:flex;gap:8px;margin-top:12px}.actions button{flex:1;min-height:47px;border:0;border-radius:12px;font-weight:800;font-size:14px}.start{background:#f59e0b;color:#111827}.reset{background:#334155;color:white}
+#status{min-height:21px;margin:11px 0 0;font-weight:700}.hint{color:#94a3b8;font-size:11px;margin-top:6px}
+.modal{position:fixed;inset:0;background:rgba(2,6,23,.74);display:grid;place-items:center;padding:20px;z-index:5}.modal.hidden{display:none}.dialog{width:min(92vw,350px);background:#172033;border:1px solid #334155;border-radius:18px;padding:23px}.dialog h2{margin:0 0 8px}.dialog p{color:#cbd5e1;line-height:1.6}.dialog button{width:100%;min-height:48px;border:0;border-radius:12px;background:#f59e0b;font-weight:800}
+@media(min-width:500px){#board{max-width:500px;margin:auto}}
 </style>
 </head>
 <body>
 <main>
 <h1>💣 マインスイーパー</h1>
-<p class="sub">9×9 ・ 爆弾10個</p>
+<p class="sub" id="difficultyText">初級 ・ 9×9 ・ 爆弾10個</p>
+<div class="levels">
+<button class="level active" data-level="easy">初級<small>9×9 / 10</small></button>
+<button class="level" data-level="normal">中級<small>16×16 / 40</small></button>
+<button class="level" data-level="hard">上級<small>16×30 / 99</small></button>
+</div>
+<div class="record">🏆 <span id="recordLabel">初級ベスト</span>　<b id="best">---</b></div>
 <div class="info">
 <div class="stat"><b id="mineCount">10</b><span>残りの旗</span></div>
 <div class="stat"><b id="timer">0</b><span>秒</span></div>
 <div class="stat"><b id="state">待機</b><span>状態</span></div>
 </div>
-<div id="board" aria-label="マインスイーパー盤面"></div>
-<div class="actions">
-<button class="start" id="startBtn" type="button">▶ ゲーム開始</button>
-<button class="reset" id="resetBtn" type="button">↻ 新しいゲーム</button>
-</div>
-<p id="status">「ゲーム開始」を押してください</p>
-<p class="hint">タップ：開く　長押し：🚩旗を付ける / 外す</p>
+<div id="board"></div>
+<div class="actions"><button class="start" id="startBtn" type="button">▶ ゲーム開始</button><button class="reset" id="resetBtn" type="button">↻ 新しいゲーム</button></div>
+<p id="status">「ゲーム開始」を押してください</p><p class="hint">タップ：開く　長押し：🚩旗　※初手は安全</p>
 </main>
-<div class="modal hidden" id="modal">
-<div class="dialog"><h2 id="resultTitle"></h2><p id="resultText"></p><button id="modalBtn" type="button">もう一度プレイ</button></div>
-</div>
+<div class="modal hidden" id="modal"><div class="dialog"><h2 id="resultTitle"></h2><p id="resultText"></p><button id="modalBtn" type="button">もう一度プレイ</button></div></div>
 <script>
 (function(){
 "use strict";
-const SIZE=9, MINES=10, TOTAL=SIZE*SIZE;
-const boardEl=document.getElementById("board"), mineEl=document.getElementById("mineCount"), timerEl=document.getElementById("timer");
-const stateEl=document.getElementById("state"), statusEl=document.getElementById("status"), startBtn=document.getElementById("startBtn"), resetBtn=document.getElementById("resetBtn");
-const modal=document.getElementById("modal"), resultTitle=document.getElementById("resultTitle"), resultText=document.getElementById("resultText"), modalBtn=document.getElementById("modalBtn");
-let cells=[], flags=new Set(), started=false, ended=false, seconds=0, interval=null, longTimer=null, suppressClick=false, ignoreNextClick=false;
-
-function neighbors(i){
- const r=Math.floor(i/SIZE), c=i%SIZE, out=[];
- for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++){
-   if(!dr&&!dc) continue; const nr=r+dr,nc=c+dc;
-   if(nr>=0&&nr<SIZE&&nc>=0&&nc<SIZE) out.push(nr*SIZE+nc);
- }
- return out;
-}
-function build(first){
- cells=Array.from({length:TOTAL},()=>({mine:false,open:false,count:0}));
- const banned=new Set([first,...neighbors(first)]);
- let pool=[]; for(let i=0;i<TOTAL;i++) if(!banned.has(i)) pool.push(i);
- for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
- pool.slice(0,MINES).forEach(i=>cells[i].mine=true);
- cells.forEach((cell,i)=>cell.count=neighbors(i).filter(j=>cells[j].mine).length);
-}
-function reset(){
- stopTimer(); flags.clear(); started=false; ended=false; seconds=0; cells=Array.from({length:TOTAL},()=>({mine:false,open:false,count:0}));
- stateEl.textContent="待機"; timerEl.textContent="0"; mineEl.textContent=String(MINES); statusEl.textContent="「ゲーム開始」を押してください"; startBtn.disabled=false; startBtn.textContent="▶ ゲーム開始"; modal.classList.add("hidden"); render();
-}
-function startGame(){ if(started&&!ended)return; if(ended)reset(); started=true; ended=false; stateEl.textContent="プレイ中"; statusEl.textContent="爆弾を避けて全部開こう！"; startBtn.disabled=true; startBtn.textContent="プレイ中"; render(); }
-function startTimer(){ if(interval)return; interval=setInterval(()=>{seconds++;timerEl.textContent=String(seconds)},1000); }
+const LEVELS={easy:{label:"初級",rows:9,cols:9,mines:10},normal:{label:"中級",rows:16,cols:16,mines:40},hard:{label:"上級",rows:16,cols:30,mines:99}};
+let levelKey="easy",cfg=LEVELS.easy,cells=[],flags=new Set(),started=false,ended=false,seconds=0,interval=null,longTimer=null;
+const $=id=>document.getElementById(id),board=$("board"),mineEl=$("mineCount"),timerEl=$("timer"),stateEl=$("state"),statusEl=$("status"),startBtn=$("startBtn"),resetBtn=$("resetBtn"),modal=$("modal"),resultTitle=$("resultTitle"),resultText=$("resultText");
+function key(){return "minesweeper-best-"+levelKey}
+function best(){const v=localStorage.getItem(key());return v?Number(v):null}
+function showBest(){$("best").textContent=best()===null?"---":best()+"秒";$("recordLabel").textContent=cfg.label+"ベスト"}
+function neighbors(i){const r=Math.floor(i/cfg.cols),c=i%cfg.cols,out=[];for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(!dr&&!dc)continue;let nr=r+dr,nc=c+dc;if(nr>=0&&nr<cfg.rows&&nc>=0&&nc<cfg.cols)out.push(nr*cfg.cols+nc)}return out}
+function build(first){const total=cfg.rows*cfg.cols;cells=Array.from({length:total},()=>({mine:false,open:false,count:0}));const banned=new Set([first,...neighbors(first)]),pool=[];for(let i=0;i<total;i++)if(!banned.has(i))pool.push(i);for(let i=pool.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}pool.slice(0,cfg.mines).forEach(i=>cells[i].mine=true);cells.forEach((c,i)=>c.count=neighbors(i).filter(j=>cells[j].mine).length)}
 function stopTimer(){if(interval){clearInterval(interval);interval=null}}
-function openCell(i){
- if(!started||ended||cells[i].open||flags.has(i))return;
- if(!cells.some(c=>c.mine)){build(i);startTimer();}
- cells[i].open=true;
- if(cells[i].mine){lose();return}
- if(cells[i].count===0) neighbors(i).forEach(j=>{if(!cells[j].open&&!cells[j].mine)openCell(j)});
- render();
- if(cells.every(c=>c.mine||c.open))win();
-}
-function toggleFlag(i){
- if(!started||ended||cells[i].open)return;
- if(flags.has(i))flags.delete(i); else if(flags.size<MINES)flags.add(i);
- mineEl.textContent=String(MINES-flags.size); render();
-}
-function win(){
- ended=true;stopTimer();stateEl.textContent="クリア";statusEl.textContent="🎉 クリア！";showResult("🎉 CLEAR!",seconds+"秒でクリアしました");
-}
-function lose(){
- ended=true;stopTimer();cells.forEach(c=>{if(c.mine)c.open=true});stateEl.textContent="ゲームオーバー";statusEl.textContent="💥 爆弾に当たりました";render();showResult("💥 GAME OVER","爆弾を踏んでしまいました");
-}
-function showResult(title,text){resultTitle.textContent=title;resultText.textContent=text;modal.classList.remove("hidden")}
-function render(){
- boardEl.innerHTML="";
- cells.forEach((c,i)=>{
-   const b=document.createElement("button"); b.type="button"; b.className="cell";
-   if(c.open){b.classList.add("open"); if(c.mine){b.classList.add("mine");b.textContent="💣"} else if(c.count){b.classList.add("n"+Math.min(c.count,4));b.textContent=String(c.count)}}
-   else if(flags.has(i)){b.classList.add("flag");b.textContent="🚩"}
-   b.setAttribute("aria-label",c.open?(c.mine?"爆弾":(c.count+"個の爆弾が隣接")):(flags.has(i)?"旗": "未開封"));
-   let pressed=false;
-   b.addEventListener("pointerdown",e=>{
-     if(e.pointerType==="mouse"&&e.button!==0)return;
-     pressed=true; suppressClick=false;
-     longTimer=setTimeout(()=>{if(pressed){pressed=false;suppressClick=true;toggleFlag(i)}},420);
-   });
-   b.addEventListener("pointerup",e=>{if(e.pointerType==="mouse"&&e.button!==0)return; if(longTimer){clearTimeout(longTimer);longTimer=null} if(pressed){pressed=false;openCell(i)}});
-   b.addEventListener("pointercancel",()=>{pressed=false;if(longTimer){clearTimeout(longTimer);longTimer=null}});
-   b.addEventListener("contextmenu",e=>{e.preventDefault();toggleFlag(i)});
-   boardEl.appendChild(b);
- });
- mineEl.textContent=String(MINES-flags.size); timerEl.textContent=String(seconds);
-}
-startBtn.addEventListener("click",()=>{if(!started)startGame()});
-resetBtn.addEventListener("click",reset);
-modalBtn.addEventListener("click",()=>{modal.classList.add("hidden");reset();startGame()});
-document.addEventListener("dblclick",e=>{if(e.target.closest("#board"))e.preventDefault()},{passive:false});
+function startTimer(){if(!interval)interval=setInterval(()=>{seconds++;timerEl.textContent=seconds},1000)}
+function reset(){stopTimer();flags.clear();started=false;ended=false;seconds=0;const total=cfg.rows*cfg.cols;cells=Array.from({length:total},()=>({mine:false,open:false,count:0}));stateEl.textContent="待機";timerEl.textContent="0";mineEl.textContent=cfg.mines;statusEl.textContent="「ゲーム開始」を押してください";startBtn.disabled=false;startBtn.textContent="▶ ゲーム開始";modal.classList.add("hidden");render();showBest()}
+function startGame(){if(started&&!ended)return;if(ended)reset();started=true;stateEl.textContent="プレイ中";statusEl.textContent="爆弾を避けて全部開こう！";startBtn.disabled=true;startBtn.textContent="プレイ中"}
+function openCell(i){if(!started||ended||cells[i].open||flags.has(i))return;if(!cells.some(c=>c.mine)){build(i);startTimer()}cells[i].open=true;if(cells[i].mine){lose();return}if(cells[i].count===0)neighbors(i).forEach(j=>{if(!cells[j].open&&!cells[j].mine)openCell(j)});render();if(cells.every(c=>c.mine||c.open))win()}
+function toggleFlag(i){if(!started||ended||cells[i].open)return;if(flags.has(i))flags.delete(i);else if(flags.size<cfg.mines)flags.add(i);render()}
+function win(){ended=true;stopTimer();stateEl.textContent="クリア";statusEl.textContent="🎉 クリア！";const old=best();let text=seconds+"秒でクリアしました。";if(old===null||seconds<old){localStorage.setItem(key(),seconds);text+="\n🏆 新記録！";showBest()}else text+="\nベストは "+old+"秒です。";showResult("🎉 CLEAR!",text)}
+function lose(){ended=true;stopTimer();cells.forEach(c=>{if(c.mine)c.open=true});stateEl.textContent="ゲームオーバー";statusEl.textContent="💥 爆弾に当たりました";render();showResult("💥 GAME OVER","爆弾を踏んでしまいました。")}
+function showResult(t,x){resultTitle.textContent=t;resultText.textContent=x;modal.classList.remove("hidden")}
+function render(){board.style.setProperty("--cols",cfg.cols);board.innerHTML="";cells.forEach((c,i)=>{const b=document.createElement("button");b.type="button";b.className="cell";if(c.open){b.classList.add("open");if(c.mine){b.classList.add("mine");b.textContent="💣"}else if(c.count){b.classList.add("n"+Math.min(c.count,4));b.textContent=c.count}}else if(flags.has(i)){b.classList.add("flag");b.textContent="🚩"}b.setAttribute("aria-label",c.open?(c.mine?"爆弾":c.count+"個の爆弾が隣接"):(flags.has(i)?"旗":"未開封"));let pressed=false;b.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button!==0)return;pressed=true;longTimer=setTimeout(()=>{if(pressed){pressed=false;toggleFlag(i)}},420)});b.addEventListener("pointerup",e=>{if(e.pointerType==="mouse"&&e.button!==0)return;if(longTimer){clearTimeout(longTimer);longTimer=null}if(pressed){pressed=false;openCell(i)}});b.addEventListener("pointercancel",()=>{pressed=false;if(longTimer){clearTimeout(longTimer);longTimer=null}});b.addEventListener("contextmenu",e=>{e.preventDefault();toggleFlag(i)});board.appendChild(b)});mineEl.textContent=cfg.mines-flags.size;timerEl.textContent=seconds}
+document.querySelectorAll(".level").forEach(btn=>btn.addEventListener("click",()=>{levelKey=btn.dataset.level;cfg=LEVELS[levelKey];document.querySelectorAll(".level").forEach(x=>x.classList.toggle("active",x===btn));$("difficultyText").textContent=cfg.label+" ・ "+cfg.rows+"×"+cfg.cols+" ・ 爆弾"+cfg.mines;$("recordLabel").textContent=cfg.label+"ベスト";reset()}));
+startBtn.addEventListener("click",startGame);resetBtn.addEventListener("click",reset);$("modalBtn").addEventListener("click",()=>{modal.classList.add("hidden");reset();startGame()});document.addEventListener("dblclick",e=>{if(e.target.closest("#board"))e.preventDefault()},{passive:false});
 reset();
 })();
 </script>
