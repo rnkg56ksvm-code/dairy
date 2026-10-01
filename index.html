@@ -67,6 +67,45 @@ function loadData(){
   }catch(e){}
   return structuredClone(blank);
 }
+const DB_NAME="hawaiiDiaryDB", DB_VERSION=1, DB_STORE="app";
+function openDB(){
+  return new Promise((resolve,reject)=>{
+    const r=indexedDB.open(DB_NAME,DB_VERSION);
+    r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(DB_STORE))r.result.createObjectStore(DB_STORE)};
+    r.onsuccess=()=>resolve(r.result); r.onerror=()=>reject(r.error);
+  });
+}
+async function dbGet(){
+  const db=await openDB();
+  return new Promise((resolve,reject)=>{
+    const r=db.transaction(DB_STORE,"readonly").objectStore(DB_STORE).get(KEY);
+    r.onsuccess=()=>resolve(r.result||null); r.onerror=()=>reject(r.error);
+  });
+}
+async function dbSet(value){
+  const db=await openDB();
+  return new Promise((resolve,reject)=>{
+    const r=db.transaction(DB_STORE,"readwrite").objectStore(DB_STORE).put(value,KEY);
+    r.onsuccess=()=>resolve(); r.onerror=()=>reject(r.error);
+  });
+}
+async function persist(){
+  await dbSet(JSON.stringify({version:4,savedAt:new Date().toISOString(),data}));
+  try{localStorage.setItem(KEY+"_meta",JSON.stringify({version:4,savedAt:new Date().toISOString()}))}catch(e){}
+}
+async function bootData(){
+  try{
+    const raw=await dbGet();
+    if(raw){data=normalize(JSON.parse(raw).data||JSON.parse(raw));render();return}
+    const migrated=loadData();
+    data=normalize(migrated);
+    await dbSet(JSON.stringify({version:4,migratedAt:new Date().toISOString(),data}));
+    try{localStorage.removeItem(KEY);localStorage.removeItem("hawaiiDiaryV1")}catch(e){}
+  }catch(e){
+    data=loadData();
+  }
+  render();
+}
 function normalize(d){
   d=Object.assign(structuredClone(blank),d||{});
   d.diary=Array.isArray(d.diary)?d.diary:[];
@@ -85,7 +124,10 @@ function normalize(d){
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function dateKey(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}function today(){return dateKey(new Date())}
 function fmt(d){if(!d)return"";return new Date(d+"T00:00:00").toLocaleDateString("ja-JP",{month:"numeric",day:"numeric",weekday:"short"})}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(data));render()}catch(e){alert("保存容量を超えました。写真を減らすか、バックアップを書き出してください。")}}
+async function save(){
+  try{await persist();render()}
+  catch(e){console.error(e);alert("保存に失敗しました。ブラウザの保存領域または空き容量を確認してください。")}
+}
 function dayNo(d=today()){const x=Math.floor((new Date(d+"T00:00:00")-new Date(START+"T00:00:00"))/86400000)+1;return Math.max(1,Math.min(5,x))}
 function allPhotos(){return data.photos}
 function stats(){
@@ -137,12 +179,43 @@ function newDiary(editIndex=-1){
 }
 function editDiary(i){newDiary(i)}
 function removeDiaryPhoto(i,j){const src=data.diary[i]?.photos?.[j];if(src&&confirm("この写真を日記から外しますか？")){data.diary[i].photos.splice(j,1);data.photos=data.photos.filter(p=>p.src!==src);save();editDiary(i)}}
-function compressFile(file,max=1400,quality=.78){
-  return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{let w=img.width,h=img.height;if(Math.max(w,h)>max){if(w>h){h=Math.round(h*max/w);w=max}else{w=Math.round(w*max/h);h=max}}const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);resolve(c.toDataURL("image/jpeg",quality))};img.onerror=reject;img.src=r.result};r.onerror=reject;r.readAsDataURL(file)});
+function compressFile(file,max=1600,quality=.72){
+  return new Promise(async(resolve,reject)=>{
+    try{
+      if(!file||!file.type.startsWith("image/")) throw new Error("画像ではありません");
+      let source;
+      if("createImageBitmap" in window){
+        try{source=await createImageBitmap(file,{imageOrientation:"from-image"})}catch(e){}
+      }
+      if(!source){
+        const r=new FileReader();
+        const url=await new Promise((res,rej)=>{r.onload=()=>res(r.result);r.onerror=()=>rej(r.error);r.readAsDataURL(file)});
+        source=await new Promise((res,rej)=>{const img=new Image();img.onload=()=>res(img);img.onerror=()=>rej(new Error("この画像形式をブラウザで読み込めません"));img.src=url});
+      }
+      let w=source.width,h=source.height;
+      if(Math.max(w,h)>max){if(w>h){h=Math.round(h*max/w);w=max}else{w=Math.round(w*max/h);h=max}}
+      const c=document.createElement("canvas");c.width=w;c.height=h;
+      const ctx=c.getContext("2d",{alpha:false});ctx.drawImage(source,0,0,w,h);
+      if(source.close)source.close();
+      resolve(c.toDataURL("image/jpeg",quality));
+    }catch(e){reject(e)}
+  });
 }
-async function readFiles(files){return Promise.all(Array.from(files).map(f=>compressFile(f)))}
+async function readFiles(files){
+  const arr=Array.from(files||[]);
+  if(arr.length>20) throw new Error("写真は一度に20枚までです");
+  const out=[];
+  for(let i=0;i<arr.length;i++){
+    try{out.push(await compressFile(arr[i]))}
+    catch(e){console.warn("写真をスキップ:",arr[i]?.name,e)}
+  }
+  if(arr.length&&!out.length) throw new Error("選択した写真を読み込めませんでした");
+  return out;
+}
 async function saveDiary(i){
   const btn=event?.target;if(btn){btn.disabled=true;btn.textContent="保存中…";}
+  const input=document.getElementById("dFiles");
+  if(!input) return;
   try{
     const ps=await readFiles(document.getElementById("dFiles").files);
     const base=i>=0?data.diary[i]:{photos:[]};
@@ -216,10 +289,10 @@ function info(){
 function editInfo(){const t=data.tripInfo;document.getElementById("app").innerHTML='<div class="card form"><div class="hero">✈️ 旅行情報を編集</div><label>開始日</label><input id="iStart" type="date" value="'+esc(t.start)+'"><label>終了日</label><input id="iEnd" type="date" value="'+esc(t.end)+'"><label>人数</label><input id="iPeople" value="'+esc(t.people)+'"><label>エリア</label><input id="iArea" value="'+esc(t.area)+'"><label>ホテル</label><input id="iHotel" value="'+esc(t.hotel)+'"><label>予約メモ（1行1件）</label><textarea id="iNotes">'+esc(t.notes.join("\n"))+'</textarea><div class="actions"><button onclick="saveInfo()">保存</button><button class="danger" onclick="tab=\'info\';render()">キャンセル</button></div></div>'}
 function saveInfo(){if(!iStart.value||!iEnd.value||iStart.value>iEnd.value)return alert("日程を正しく入力してください");data.tripInfo={start:iStart.value,end:iEnd.value,people:iPeople.value.trim(),area:iArea.value.trim(),hotel:iHotel.value.trim(),notes:iNotes.value.split("\n").map(x=>x.trim()).filter(Boolean)};tab="info";save()}
 function delItem(type,i){if(!confirm("削除しますか？"))return;if(type==="diary"){const x=data.diary[i];if(x?.id)data.photos=data.photos.filter(p=>p.diaryId!==x.id);else if(x?.photos)data.photos=data.photos.filter(p=>!x.photos.includes(p.src));}data[type].splice(i,1);save()}
-function exportData(){const blob=new Blob([JSON.stringify({version:3,exportedAt:new Date().toISOString(),data},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="hawaii-diary-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
-function importData(file){if(!file)return;if(!confirm("現在のデータをバックアップ内容で置き換えます。続行しますか？"))return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);data=normalize(x.data||x);save();alert("復元しました。")}catch(e){alert("バックアップの読み込みに失敗しました。")}};r.readAsText(file)}
+function exportData(){const blob=new Blob([JSON.stringify({version:4,exportedAt:new Date().toISOString(),data},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="hawaii-diary-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+async function importData(file){if(!file)return;if(!confirm("現在のデータをバックアップ内容で置き換えます。続行しますか？"))return;const r=new FileReader();r.onload=async()=>{try{const x=JSON.parse(r.result);data=normalize(x.data||x);await persist();render();alert("復元しました")}catch(e){console.error(e);alert("バックアップの読み込みに失敗しました。")}};r.readAsText(file)}
 
 document.getElementById("nav").onclick=e=>{const b=e.target.closest("button[data-tab]");if(b){tab=b.dataset.tab;filter="";diaryFilterDate="";render()}};
 document.getElementById("fab").onclick=()=>newDiary();
-render();
+bootData();
 </script>
