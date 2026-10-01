@@ -236,7 +236,7 @@ input:focus,textarea:focus,select:focus{
   .nav{max-width:760px;margin:12px auto 6px!important}
 }
 </style></head><body>
-<header><div class="wrap"><h1>🌺 Hawaii 2026</h1><div style="font-size:11px;opacity:.8;margin-top:3px">Build 2026-10-01.13</div><p>Oahu · 2026/10/1 — 10/5 · 2人</p><div class="stats"><div class="stat"><b id="day">DAY 1</b><span>旅行日</span></div><div class="stat"><b id="entries">0</b><span>日記</span></div><div class="stat"><b id="photos">0</b><span>写真</span></div></div></div></header>
+<header><div class="wrap"><h1>🌺 Hawaii 2026</h1><div style="font-size:11px;opacity:.8;margin-top:3px">Build 2026-10-02.01</div><p>Oahu · 2026/10/1 — 10/5 · 2人</p><div class="stats"><div class="stat"><b id="day">DAY 1</b><span>旅行日</span></div><div class="stat"><b id="entries">0</b><span>日記</span></div><div class="stat"><b id="photos">0</b><span>写真</span></div></div></div></header>
 <nav class="nav" id="nav"><button data-tab="home" class="active">🏝️ ホーム</button><button data-tab="diary">✍️ 日記</button><button data-tab="timeline">🕐 時系列</button><button data-tab="schedule">📅 予定</button><button data-tab="photos">📷 写真</button><button data-tab="food">🍴 食事</button><button data-tab="money">💵 支出</button><button data-tab="info">✈️ 旅行情報</button></nav>
 <main class="wrap content" id="app"></main><button class="fab" id="fab">＋</button>
 <script>
@@ -400,8 +400,7 @@ async function readFiles(files){
   if(arr.length&&!out.length) throw new Error("選択した写真を読み込めませんでした");
   return out;
 }
-async function saveDiary(i){
-  const btn=event?.target;if(btn){btn.disabled=true;btn.textContent="保存中…";}
+async function saveDiary(i,btn){if(btn){btn.disabled=true;btn.textContent="保存中…";}
   const input=document.getElementById("dFiles");
   if(!input) return;
   try{
@@ -483,5 +482,8 @@ async function importData(file){if(!file)return;if(!confirm("現在のデータ�
 document.getElementById("nav").onclick=e=>{const b=e.target.closest("button[data-tab]");if(b){tab=b.dataset.tab;filter="";diaryFilterDate="";render()}};
 document.getElementById("fab").onclick=()=>newDiary();
 let lastTap=0;document.addEventListener("touchend",e=>{const now=Date.now();if(now-lastTap<350){e.preventDefault()}lastTap=now},{passive:false});
+
+document.addEventListener("dblclick",e=>e.preventDefault(),{passive:false});
+document.addEventListener("gesturestart",e=>e.preventDefault(),{passive:false});
 bootData();
 </script>
