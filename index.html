@@ -139,6 +139,57 @@ function openPhotoSrc(src){
   o.addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-o._sx;if(Math.abs(dx)>50)window.movePhoto(dx<0?1:-1)},{passive:true});
 }
 
+function food(){
+  let a=data.food.slice().sort((x,y)=>y.date.localeCompare(x.date));
+  if(filter)a=a.filter(x=>(x.name+" "+x.dish+" "+x.note).toLowerCase().includes(filter.toLowerCase()));
+  return '<div class="card"><div class="row between"><div class="hero">🍴 食事</div><button onclick="addFood()">＋追加</button></div>'+searchBox("店名・料理名・メモを検索")+'</div>'+(a.length?a.map(x=>'<div class="card"><div class="row between"><div><b>'+esc(x.name)+'</b><div class="muted">'+fmt(x.date)+' · '+esc(x.dish||"")+'</div></div><div class="row"><button class="small" onclick="addFood('+data.food.indexOf(x)+')">編集</button><button class="danger small" onclick="delItem(\'food\','+data.food.indexOf(x)+')">削除</button></div></div>'+(x.rating?'⭐'.repeat(Number(x.rating)):"")+(x.amount?'<div class="price">$'+Number(x.amount).toFixed(2)+'</div>':"")+(x.note?'<p>'+esc(x.note)+'</p>':"")+'</div>').join(""):'<div class="empty">食事の記録を追加できます。</div>');
+}
+function addFood(i=-1){
+  const x=i>=0?data.food[i]:{date:today(),name:"",dish:"",amount:"",rating:"",note:""};
+  document.getElementById("app").innerHTML='<div class="card form"><div class="hero">🍴 '+(i>=0?"食事を編集":"食事を追加")+'</div><label>日付</label><input id="fDate" type="date" value="'+esc(x.date)+'"><label>店名</label><input id="fName" value="'+esc(x.name)+'"><label>料理</label><input id="fDish" value="'+esc(x.dish||"")+'"><label>金額（USD）</label><input id="fAmount" type="number" step="0.01" value="'+esc(x.amount||"")+'"><label>評価</label><select id="fRating"><option value="">未評価</option>'+[1,2,3,4,5].map(n=>'<option value="'+n+'" '+(String(x.rating)===String(n)?"selected":"")+'>'+n+' / 5</option>').join("")+'</select><label>メモ</label><textarea id="fNote">'+esc(x.note||"")+'</textarea><div class="actions"><button onclick="saveFood('+i+')">保存</button><button class="danger" onclick="tab=\'food\';render()">キャンセル</button></div></div>';
+}
+function saveFood(i){const x={date:fDate.value,name:fName.value.trim(),dish:fDish.value,amount:Number(fAmount.value||0),rating:fRating.value,note:fNote.value};if(!x.name)return alert("店名を入力してください");if(i>=0)data.food[i]=x;else data.food.push(x);tab="food";save()}
+
+function places(){
+  let a=data.places.slice().sort((x,y)=>y.date.localeCompare(x.date));
+  if(filter)a=a.filter(x=>(x.name+" "+x.note).toLowerCase().includes(filter.toLowerCase()));
+  return '<div class="card"><div class="row between"><div class="hero">📍 場所</div><button onclick="addPlace()">＋追加</button></div>'+searchBox("場所・メモを検索")+'</div>'+(a.length?a.map(x=>'<div class="card"><div class="row between"><div><b>'+esc(x.name)+'</b><div class="muted">'+fmt(x.date)+'</div></div><div class="row"><button class="small" onclick="addPlace('+data.places.indexOf(x)+')">編集</button><button class="danger small" onclick="delItem(\'places\','+data.places.indexOf(x)+')">削除</button></div></div>'+(x.note?'<p>'+esc(x.note)+'</p>':"")+'<button class="small" onclick="window.open(\'https://www.google.com/maps/search/?api=1&query=\'+encodeURIComponent(\''+esc(x.name).replace(/'/g,"")+'\'),\'_blank\')">Google Maps</button></div>').join(""):'<div class="empty">訪れた場所を追加できます。</div>');
+}
+function addPlace(i=-1){
+  const x=i>=0?data.places[i]:{date:today(),name:"",note:""};
+  document.getElementById("app").innerHTML='<div class="card form"><div class="hero">📍 '+(i>=0?"場所を編集":"場所を追加")+'</div><label>日付</label><input id="pDate" type="date" value="'+esc(x.date)+'"><label>場所</label><input id="pName" value="'+esc(x.name)+'"><label>メモ</label><textarea id="pNote">'+esc(x.note||"")+'</textarea><div class="actions"><button onclick="savePlace('+i+')">保存</button><button class="danger" onclick="tab=\'places\';render()">キャンセル</button></div></div>';
+}
+function savePlace(i){const x={date:pDate.value,name:pName.value.trim(),note:pNote.value};if(!x.name)return alert("場所を入力してください");if(i>=0)data.places[i]=x;else data.places.push(x);tab="places";save()}
+
+function money(){
+  let a=data.money.slice().sort((x,y)=>y.date.localeCompare(x.date));
+  if(filter)a=a.filter(x=>(x.name+" "+x.category+" "+x.note).toLowerCase().includes(filter.toLowerCase()));
+  const total=data.money.reduce((s,x)=>s+Number(x.amount||0),0),cats={};data.money.forEach(x=>cats[x.category||"その他"]=(cats[x.category||"その他"]||0)+Number(x.amount||0));
+  return '<div class="card"><div class="row between"><div class="hero">💵 支出</div><div class="expense">$'+total.toFixed(2)+'</div></div><button onclick="addMoney()">＋支出を追加</button>'+searchBox("内容・カテゴリを検索")+'<div class="catGrid">'+Object.keys(cats).map(k=>'<div class="info"><b>'+esc(k)+'</b><br>$'+cats[k].toFixed(2)+'</div>').join("")+'</div></div>'+(a.length?a.map(x=>'<div class="card"><div class="row between"><div><b>'+esc(x.name)+'</b><div class="muted">'+fmt(x.date)+' · '+esc(x.category||"その他")+'</div></div><div><b>$'+Number(x.amount||0).toFixed(2)+'</b><br><button class="small" onclick="addMoney('+data.money.indexOf(x)+')">編集</button> <button class="danger small" onclick="delItem(\'money\','+data.money.indexOf(x)+')">削除</button></div></div>'+(x.note?'<p class="muted">'+esc(x.note)+'</p>':"")+'</div>').join(""):'<div class="empty">支出を追加できます。</div>');
+}
+function addMoney(i=-1){
+  const x=i>=0?data.money[i]:{date:today(),name:"",category:"食事",amount:"",note:""},cats=["食事","交通","ホテル","買い物","観光","その他"];
+  document.getElementById("app").innerHTML='<div class="card form"><div class="hero">💵 '+(i>=0?"支出を編集":"支出を追加")+'</div><label>日付</label><input id="mDate" type="date" value="'+esc(x.date)+'"><label>内容</label><input id="mName" value="'+esc(x.name)+'"><label>カテゴリ</label><select id="mCat">'+cats.map(v=>'<option '+(x.category===v?"selected":"")+'>'+v+'</option>').join("")+'</select><label>金額（USD）</label><input id="mAmount" type="number" step="0.01" value="'+esc(x.amount||"")+'"><label>メモ</label><textarea id="mNote">'+esc(x.note||"")+'</textarea><div class="actions"><button onclick="saveMoney('+i+')">保存</button><button class="danger" onclick="tab=\'money\';render()">キャンセル</button></div></div>';
+}
+function saveMoney(i){const x={date:mDate.value,name:mName.value.trim(),category:mCat.value,amount:Number(mAmount.value||0),note:mNote.value};if(!x.name||!x.amount)return alert("内容と金額を入力してください");if(i>=0)data.money[i]=x;else data.money.push(x);tab="money";save()}
+
+function schedule(){
+  const a=data.schedule.slice().sort((x,y)=>(x.date+x.time).localeCompare(y.date+y.time));
+  return '<div class="card"><div class="row between"><div class="hero">📅 予定</div><button onclick="addSchedule()">＋追加</button></div><p class="muted">旅行中の予約・移動・観光予定を時間順に管理できます。</p></div><div class="card">'+[1,2,3,4,5].map(n=>{const d=new Date(START+"T00:00:00");d.setDate(d.getDate()+n-1);const ds=dateKey(d),items=a.filter(x=>x.date===ds);return '<div class="entry"><b>DAY '+n+' · '+fmt(ds)+'</b>'+(items.length?items.map(x=>'<div class="info" style="margin-top:8px"><b>'+esc(x.time||"時間未設定")+'　'+esc(x.title)+'</b><div class="muted">'+esc(x.place||"")+'</div>'+(x.note?'<p>'+esc(x.note)+'</p>':"")+'<button class="small" onclick="addSchedule(\''+x.date+'\','+data.schedule.indexOf(x)+')">編集</button> <button class="danger small" onclick="delItem(\'schedule\','+data.schedule.indexOf(x)+')">削除</button></div>').join(""):'<div class="empty">予定なし</div>')+'</div>'}).join("")+'</div>';
+}
+function addSchedule(date="",i=-1){const x=i>=0?data.schedule[i]:{date:date||today(),time:"",title:"",place:"",note:""};document.getElementById("app").innerHTML='<div class="card form"><div class="hero">📅 '+(i>=0?"予定を編集":"予定を追加")+'</div><label>日付</label><input id="sDate" type="date" value="'+esc(x.date)+'"><label>時間</label><input id="sTime" type="time" value="'+esc(x.time||"")+'"><label>予定</label><input id="sTitle" value="'+esc(x.title||"")+'"><label>場所</label><input id="sPlace" value="'+esc(x.place||"")+'"><label>メモ</label><textarea id="sNote">'+esc(x.note||"")+'</textarea><div class="actions"><button onclick="saveSchedule('+i+')">保存</button><button class="danger" onclick="tab=\'schedule\';render()">キャンセル</button></div></div>'}
+function saveSchedule(i){const x={date:sDate.value,time:sTime.value,title:sTitle.value.trim(),place:sPlace.value,note:sNote.value};if(!x.title)return alert("予定を入力してください");if(i>=0)data.schedule[i]=x;else data.schedule.push(x);tab="schedule";save()}
+
+function info(){
+  const t=data.tripInfo;
+  return '<div class="card"><div class="row between"><div class="hero">✈️ 旅行情報</div><button class="small" onclick="editInfo()">編集</button></div><div class="grid" style="margin-top:15px"><div class="info"><b>📅 日程</b><br>'+esc(t.start)+'〜'+esc(t.end)+'</div><div class="info"><b>👫 人数</b><br>'+esc(t.people)+'</div><div class="info"><b>📍 エリア</b><br>'+esc(t.area)+'</div><div class="info"><b>🏨 ホテル</b><br>'+esc(t.hotel)+'</div></div></div><div class="card"><b>🍴 予約メモ</b>'+t.notes.map(n=>'<p>'+esc(n)+'</p>').join("")+'</div><div class="card"><div class="hero">💾 データ管理</div><p class="muted">復元すると現在のデータは置き換わります。必要なら先にバックアップを保存してください。</p><div class="actions"><button onclick="exportData()">バックアップ保存</button><button class="small" onclick="document.getElementById(\'importFile\').click()">復元</button><input id="importFile" type="file" accept=".json,application/json" style="display:none" onchange="importData(this.files[0])"></div></div>';
+}
+function editInfo(){const t=data.tripInfo;document.getElementById("app").innerHTML='<div class="card form"><div class="hero">✈️ 旅行情報を編集</div><label>開始日</label><input id="iStart" type="date" value="'+esc(t.start)+'"><label>終了日</label><input id="iEnd" type="date" value="'+esc(t.end)+'"><label>人数</label><input id="iPeople" value="'+esc(t.people)+'"><label>エリア</label><input id="iArea" value="'+esc(t.area)+'"><label>ホテル</label><input id="iHotel" value="'+esc(t.hotel)+'"><label>予約メモ（1行1件）</label><textarea id="iNotes">'+esc(t.notes.join("\n"))+'</textarea><div class="actions"><button onclick="saveInfo()">保存</button><button class="danger" onclick="tab=\'info\';render()">キャンセル</button></div></div>'}
+function saveInfo(){if(!iStart.value||!iEnd.value||iStart.value>iEnd.value)return alert("日程を正しく入力してください");data.tripInfo={start:iStart.value,end:iEnd.value,people:iPeople.value.trim(),area:iArea.value.trim(),hotel:iHotel.value.trim(),notes:iNotes.value.split("\n").map(x=>x.trim()).filter(Boolean)};tab="info";save()}
+function delItem(type,i){if(!confirm("削除しますか？"))return;if(type==="diary"){const x=data.diary[i];if(x?.id)data.photos=data.photos.filter(p=>p.diaryId!==x.id);else if(x?.photos)data.photos=data.photos.filter(p=>!x.photos.includes(p.src));}data[type].splice(i,1);save()}
+function exportData(){const blob=new Blob([JSON.stringify({version:3,exportedAt:new Date().toISOString(),data},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="hawaii-diary-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function importData(file){if(!file)return;if(!confirm("現在のデータをバックアップ内容で置き換えます。続行しますか？"))return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);data=normalize(x.data||x);save();alert("復元しました。")}catch(e){alert("バックアップの読み込みに失敗しました。")}};r.readAsText(file)}
+
 document.getElementById("nav").onclick=e=>{const b=e.target.closest("button[data-tab]");if(b){tab=b.dataset.tab;filter="";diaryFilterDate="";render()}};
 document.getElementById("fab").onclick=()=>newDiary();
 render();
