@@ -1,6 +1,5 @@
 name: Deploy Hawaii Diary to GitHub Pages
-# build: 2026-10-01.13
-# Hawaii UI polish deployment
+# build: 2026-10-01.14
 
 on:
   push:
@@ -34,7 +33,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Cache-bust: deploy the repository root exactly as the latest main commit\n          path: "."
+          path: "."
 
       - name: Deploy to GitHub Pages
         id: deployment
