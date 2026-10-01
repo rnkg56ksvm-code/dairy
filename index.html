@@ -48,7 +48,7 @@ input,textarea,select{border:1px solid #bfe3df!important;border-radius:12px!impo
 .searchrow{display:flex;gap:6px;margin-top:14px}.searchrow input{flex:1;padding:10px;border:1px solid #d6e0e3;border-radius:10px}.filterline{display:flex;align-items:center;gap:7px;margin-top:10px}.filterline input{padding:8px;border:1px solid #d6e0e3;border-radius:10px}.entry{border-top:1px solid #edf1f2;padding:15px 0}.entry:first-child{border-top:0}.dayRow{display:grid;grid-template-columns:60px 75px 1fr;gap:8px;align-items:center;padding:12px 8px;border-top:1px solid #edf1f2;cursor:pointer}.dayRow.current{background:#eaf7f6;border-radius:10px}.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;cursor:pointer}.price{font-size:18px;font-weight:800;margin-top:6px}.catGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.heroCard{background:linear-gradient(145deg,#fff,#edf9f8)}select{width:100%;padding:11px;border:1px solid #d6e0e3;border-radius:12px;background:white}.photoWrap{position:relative}.photoWrap .mini{position:absolute;right:3px;top:3px;padding:3px 8px;border-radius:99px}.lightbox{position:fixed;inset:0;background:#000d;z-index:20;display:flex;align-items:center;justify-content:center;padding:15px}.lightbox img{max-width:100%;max-height:90vh;object-fit:contain}.lightbox button{position:absolute;right:18px;top:18px;border-radius:50%;font-size:24px;width:45px;height:45px;padding:0}.editOld{margin-top:10px}
 @media(max-width:420px){.dayRow{grid-template-columns:52px 70px 1fr}.catGrid{grid-template-columns:1fr}.searchrow{flex-wrap:wrap}.searchrow input{min-width:100%}}
 .photoNav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;padding:0;font-size:22px}.photoPrev{left:12px}.photoNext{right:12px}</style></head><body>
-<header><div class="wrap"><h1>🌺 Hawaii 2026</h1><div style="font-size:11px;opacity:.8;margin-top:3px">Build 2026-10-01.7</div><p>Oahu · 2026/10/1 — 10/5 · 2人</p><div class="stats"><div class="stat"><b id="day">DAY 1</b><span>旅行日</span></div><div class="stat"><b id="entries">0</b><span>日記</span></div><div class="stat"><b id="photos">0</b><span>写真</span></div></div></div></header>
+<header><div class="wrap"><h1>🌺 Hawaii 2026</h1><div style="font-size:11px;opacity:.8;margin-top:3px">Build 2026-10-01.8</div><p>Oahu · 2026/10/1 — 10/5 · 2人</p><div class="stats"><div class="stat"><b id="day">DAY 1</b><span>旅行日</span></div><div class="stat"><b id="entries">0</b><span>日記</span></div><div class="stat"><b id="photos">0</b><span>写真</span></div></div></div></header>
 <nav class="nav" id="nav"><button data-tab="home" class="active">🏝️ ホーム</button><button data-tab="diary">✍️ 日記</button><button data-tab="timeline">🕐 時系列</button><button data-tab="schedule">📅 予定</button><button data-tab="photos">📷 写真</button><button data-tab="food">🍴 食事</button><button data-tab="money">💵 支出</button><button data-tab="info">✈️ 旅行情報</button></nav>
 <main class="wrap content" id="app"></main><button class="fab" id="fab">＋</button>
 <script>
@@ -72,7 +72,6 @@ function normalize(d){
   d.diary=Array.isArray(d.diary)?d.diary:[];
   d.photos=Array.isArray(d.photos)?d.photos:[];
   d.food=Array.isArray(d.food)?d.food:[];
-  d.places=Array.isArray(d.places)?d.places:[];
   d.money=Array.isArray(d.money)?d.money:[];d.schedule=Array.isArray(d.schedule)?d.schedule:[];
   d.tripInfo=Object.assign(structuredClone(blank.tripInfo),d.tripInfo||{});
   d.diary.forEach(x=>{if(!x.id)x.id=(crypto.randomUUID?crypto.randomUUID():"d"+Date.now()+Math.random().toString(36).slice(2));x.photos=Array.isArray(x.photos)?x.photos:[]});
@@ -104,7 +103,6 @@ function render(){
   else if(tab==="timeline")h=timeline();else if(tab==="schedule")h=schedule();
   else if(tab==="photos")h=photos();
   else if(tab==="food")h=food();
-  else if(tab==="places")h=places();
   else if(tab==="money")h=money();
   else h=info();
   document.getElementById("app").innerHTML=h;
@@ -161,7 +159,6 @@ function timeline(){
   data.diary.forEach(x=>ev.push({date:x.date,time:x.time||"",kind:"✍️",title:x.title||"無題",body:x.body||""}));
   data.schedule.forEach(x=>ev.push({date:x.date,time:x.time||"",kind:"📅",title:x.title||"予定",body:[x.place,x.note].filter(Boolean).join(" · ")}));
   data.food.forEach(x=>ev.push({date:x.date,time:"",kind:"🍴",title:x.name||"食事",body:[x.dish,x.note].filter(Boolean).join(" · ")}));
-  data.places.forEach(x=>ev.push({date:x.date,time:"",kind:"📍",title:x.name||"場所",body:x.note||""}));
   data.money.forEach(x=>ev.push({date:x.date,time:"",kind:"💵",title:x.name||"支出",body:(x.category||"その他")+" · $"+Number(x.amount||0).toFixed(2)}));
   let a=ev.sort((x,y)=>(x.date+x.time).localeCompare(y.date+y.time));
   if(filter)a=a.filter(x=>(x.title+" "+x.body).toLowerCase().includes(filter.toLowerCase()));
