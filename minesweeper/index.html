@@ -3,65 +3,247 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>マインスイーパー</title>
+<meta name="theme-color" content="#07111f">
+<title>MINESWEEPER // APEX</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;background:#0b1220;color:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}body{min-height:100%;touch-action:manipulation}
-main{width:min(94vw,520px);margin:0 auto;padding:20px 0 30px;text-align:center}h1{margin:0 0 6px;font-size:29px}.sub{margin:0 0 14px;color:#94a3b8;font-size:13px}
-.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}.level{border:1px solid #334155;background:#172033;color:#cbd5e1;border-radius:11px;padding:9px 3px;font-weight:800;font-size:13px}.level small{display:block;font-size:10px;color:#94a3b8;margin-top:2px}.level.active{background:#f59e0b;color:#111827;border-color:#f59e0b}.level.active small{color:#374151}
-.record{background:#172033;border:1px solid #26344d;border-radius:12px;padding:9px;margin-bottom:12px;font-size:13px}.record b{font-size:17px}.record span{color:#94a3b8}
-.info{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px}.stat{background:#172033;border:1px solid #26344d;border-radius:11px;padding:8px 3px}.stat b{display:block;font-size:19px}.stat span{font-size:10px;color:#94a3b8}
-#board{display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:3px;background:#020617;padding:5px;border-radius:14px;user-select:none;-webkit-user-select:none;touch-action:manipulation}
-.cell{min-width:0;aspect-ratio:1;border:0;border-radius:5px;background:#475569;color:#fff;font-size:clamp(13px,5vw,23px);font-weight:900;padding:0;touch-action:manipulation;-webkit-touch-callout:none}.cell:active{filter:brightness(1.18)}.cell.open{background:#e2e8f0;color:#0f172a}.cell.flag{background:#334155}.cell.mine{background:#ef4444}.cell.n1{color:#2563eb}.cell.n2{color:#16a34a}.cell.n3{color:#dc2626}.cell.n4{color:#7c3aed}
-.actions{display:flex;gap:8px;margin-top:12px}.actions button{flex:1;min-height:47px;border:0;border-radius:12px;font-weight:800;font-size:14px}.start{background:#f59e0b;color:#111827}.reset{background:#334155;color:white}
-#status{min-height:21px;margin:11px 0 0;font-weight:700}.hint{color:#94a3b8;font-size:11px;margin-top:6px}
-.modal{position:fixed;inset:0;background:rgba(2,6,23,.74);display:grid;place-items:center;padding:20px;z-index:5}.modal.hidden{display:none}.dialog{width:min(92vw,350px);background:#172033;border:1px solid #334155;border-radius:18px;padding:23px}.dialog h2{margin:0 0 8px}.dialog p{color:#cbd5e1;line-height:1.6}.dialog button{width:100%;min-height:48px;border:0;border-radius:12px;background:#f59e0b;font-weight:800}
-@media(min-width:500px){#board{max-width:500px;margin:auto}}
+:root{
+  --bg:#07111f;--panel:#0d1a2b;--panel2:#122238;--line:#203753;
+  --text:#f4f8ff;--muted:#8195ad;--cyan:#39d8ff;--blue:#5d7cff;
+  --lime:#b9f36b;--gold:#ffc857;--red:#ff5d73;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:
+ radial-gradient(circle at 15% 0%,#153252 0,transparent 34%),
+ radial-gradient(circle at 100% 20%,#14274a 0,transparent 30%),var(--bg);
+ color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+body{touch-action:manipulation}
+button{font:inherit;-webkit-tap-highlight-color:transparent}
+.app{width:min(94vw,720px);margin:0 auto;padding:22px 0 42px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.brand{display:flex;gap:11px;align-items:center}
+.logo{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#1a3657,#0e2037);border:1px solid #2b4a6e;box-shadow:0 8px 25px #0005;font-size:21px}
+.kicker{font-size:10px;letter-spacing:.22em;color:var(--cyan);font-weight:900}.brand h1{font-size:20px;margin:2px 0 0;letter-spacing:.04em}
+.home-btn{border:1px solid #29415e;background:#0c1929;color:#b8c8da;border-radius:12px;padding:9px 12px;font-weight:800}
+.hero{padding:24px;border:1px solid #1d3550;border-radius:24px;background:linear-gradient(145deg,#0f2034dd,#0a1626f2);box-shadow:0 20px 55px #0005;position:relative;overflow:hidden}
+.hero:after{content:"01";position:absolute;right:-10px;top:-32px;font-size:180px;font-weight:900;line-height:1;color:#39d8ff07;pointer-events:none}
+.eyebrow{color:var(--cyan);font-size:11px;font-weight:900;letter-spacing:.18em}
+.hero h2{font-size:34px;margin:8px 0 7px;letter-spacing:-.04em}.hero p{margin:0;color:var(--muted);line-height:1.65;font-size:13px}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:20px}
+.level{min-height:70px;border:1px solid #29415e;background:#0c1929;color:#b9c8d8;border-radius:16px;padding:10px 7px;text-align:left;transition:.15s}
+.level strong{display:block;font-size:14px}.level small{display:block;color:#70859e;margin-top:5px;font-size:10px}
+.level.active{background:linear-gradient(145deg,#17385a,#102840);border-color:#39d8ff;box-shadow:0 0 0 1px #39d8ff33,0 10px 25px #39d8ff16;color:#fff}
+.level.active small{color:#9cecff}
+.level:active{transform:scale(.98)}
+.start{width:100%;margin-top:14px;border:0;border-radius:16px;padding:15px;background:linear-gradient(135deg,var(--cyan),var(--blue));color:#06111e;font-weight:950;box-shadow:0 12px 28px #39d8ff25}
+.start:active{transform:scale(.985)}
+.rules{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.pill{padding:7px 10px;border:1px solid #203753;border-radius:99px;color:#8da2b8;font-size:11px;background:#091625}
+.screen.hidden{display:none}
+.hud{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:8px;margin-bottom:10px}
+.stat{border:1px solid var(--line);background:#0d1a2b;border-radius:15px;padding:10px;text-align:center}.stat span{display:block;color:#71869e;font-size:9px;text-transform:uppercase;letter-spacing:.12em}.stat b{display:block;font-size:20px;margin-top:2px}
+.stat.state b{color:var(--cyan);font-size:14px;margin-top:6px}
+.gamebar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.difficulty-chip{border:1px solid #29415e;background:#0d1a2b;border-radius:12px;padding:8px 10px;font-size:11px;font-weight:900;color:#b9c8d8}
+.game-actions{display:flex;gap:7px}.game-actions button{border:1px solid #29415e;background:#0d1a2b;color:#b9c8d8;border-radius:11px;padding:8px 10px;font-size:11px;font-weight:900}
+.progress{height:4px;background:#14253a;border-radius:99px;overflow:hidden;margin-bottom:11px}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--lime));transition:width .25s}
+.board-shell{width:100%;overflow-x:auto;overflow-y:hidden;padding:5px 0 8px;scrollbar-color:#29415e transparent}
+.board{--cols:9;display:grid;grid-template-columns:repeat(var(--cols),var(--cell));gap:3px;width:max-content;min-width:100%;padding:6px;border-radius:18px;background:#030914;border:1px solid #1b2e45;box-shadow:inset 0 0 35px #0008,0 18px 35px #0004;margin:auto}
+.cell{width:var(--cell);height:var(--cell);padding:0;border:1px solid #263c57;border-radius:6px;background:linear-gradient(145deg,#19304a,#122238);color:#fff;font-size:clamp(12px,2.9vw,22px);font-weight:950;display:grid;place-items:center;user-select:none;touch-action:manipulation}
+.cell:active{filter:brightness(1.3);transform:scale(.96)}.cell.open{background:#dfe9f3;border-color:#c5d4e3;color:#07111f}.cell.flag{background:linear-gradient(145deg,#1d3854,#142942)}.cell.mine{background:linear-gradient(145deg,#ff687d,#d93452);border-color:#ff8292}.cell.n1{color:#2463dc}.cell.n2{color:#178a52}.cell.n3{color:#d52d42}.cell.n4{color:#7549bd}.cell.n5{color:#a43b20}.cell.n6{color:#168d91}.cell.n7{color:#17233b}.cell.n8{color:#65758a}
+.status{margin:10px 0 0;text-align:center;color:#8da2b8;font-size:12px;min-height:19px}
+.result{margin-top:12px;border:1px solid #29415e;background:linear-gradient(145deg,#102239,#0c1929);border-radius:18px;padding:15px;display:none}.result.show{display:block}
+.result-row{display:flex;align-items:center;justify-content:space-between;gap:10px}.result-title{font-weight:950}.result-time{color:var(--gold);font-size:20px;font-weight:950}.result-actions{display:flex;gap:8px;margin-top:11px}.result-actions button{flex:1;border:0;border-radius:12px;padding:11px;font-weight:900}.again{background:var(--cyan);color:#06111e}.records{background:#182a40;color:#d9e5f2}
+.records-panel{margin-top:14px;border:1px solid #1d3550;border-radius:22px;background:#0c1929;padding:18px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.panel-head h3{margin:0;font-size:17px}.panel-head span{font-size:10px;color:#6f849b}
+.record-row{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:12px 0;border-top:1px solid #1b3048}.record-row:first-child{border-top:0}.rank{color:#687f98;font-weight:950}.record-row .name{font-weight:850}.record-row small{display:block;color:#70859c;margin-top:3px}.record-row b{color:var(--gold)}
+.empty-record{text-align:center;padding:18px;color:#71869e;font-size:12px}
+.modal{position:fixed;inset:0;background:#020711d9;backdrop-filter:blur(9px);display:grid;place-items:center;padding:20px;z-index:10}.modal.hidden{display:none}
+.dialog{width:min(92vw,380px);border:1px solid #2a4564;border-radius:24px;background:linear-gradient(145deg,#12243a,#091624);padding:25px;box-shadow:0 30px 80px #0009;text-align:center}.dialog .icon{font-size:38px}.dialog h2{margin:8px 0 5px;font-size:27px}.dialog p{margin:0;color:#91a5ba;line-height:1.7;white-space:pre-line}.dialog button{width:100%;margin-top:17px;border:0;border-radius:14px;padding:13px;background:linear-gradient(135deg,var(--cyan),var(--blue));font-weight:950;color:#06111e}
+@media(min-width:560px){.app{padding-top:32px}.hero{padding:28px}.board{--cell:28px}.board-shell{overflow-x:auto}.cell{font-size:16px}}
+@media(max-width:559px){.app{width:min(94vw,520px)}.hero h2{font-size:29px}.levels{grid-template-columns:repeat(2,1fr)}.level:last-child{grid-column:span 2}.board{--cell:clamp(25px,7.5vw,34px)}}
+@media(max-width:390px){.hero{padding:19px}.hero h2{font-size:26px}.hud{gap:5px}.stat{padding:8px 4px}.stat b{font-size:17px}.game-actions button{padding:8px}.board{--cell:25px}}
 </style>
 </head>
 <body>
-<main>
-<h1>💣 マインスイーパー</h1>
-<p class="sub" id="difficultyText">初級 ・ 9×9 ・ 爆弾10個</p>
-<div class="levels">
-<button class="level active" data-level="easy">初級<small>9×9 / 10</small></button>
-<button class="level" data-level="normal">中級<small>16×16 / 40</small></button>
-<button class="level" data-level="hard">上級<small>16×30 / 99</small></button>
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><div class="logo">💣</div><div><div class="kicker">APEX ARCADE</div><h1>MINESWEEPER</h1></div></div>
+    <button class="home-btn" id="homeBtn">⌂ ホーム</button>
+  </div>
+
+  <section class="screen" id="homeScreen">
+    <div class="hero">
+      <div class="eyebrow">CLEAR THE GRID</div>
+      <h2>地雷を見抜け。</h2>
+      <p>数字をヒントに安全なマスを開こう。<br>初手は安全。長押しで旗を立てられます。</p>
+      <div class="levels" id="levels"></div>
+      <button class="start" id="startBtn">▶　ゲームを開始</button>
+      <div class="rules"><span class="pill">⚡ ベストタイム</span><span class="pill">🚩 長押しで旗</span><span class="pill">🛡 初手安全</span></div>
+    </div>
+    <div class="records-panel">
+      <div class="panel-head"><h3>🏆 クリア記録</h3><span>この端末に保存</span></div>
+      <div id="recordList"></div>
+    </div>
+  </section>
+
+  <section class="screen hidden" id="gameScreen">
+    <div class="hud">
+      <div class="stat"><span>MINES</span><b id="mineCount">10</b></div>
+      <div class="stat state"><span>STATUS</span><b id="state">READY</b></div>
+      <div class="stat"><span>TIME</span><b id="timer">0</b></div>
+    </div>
+    <div class="gamebar">
+      <div class="difficulty-chip" id="difficultyChip">初級</div>
+      <div class="game-actions"><button id="recordBtn">🏆 記録</button><button id="resetBtn">↻ リセット</button><button id="backBtn">← 戻る</button></div>
+    </div>
+    <div class="progress"><i id="progress"></i></div>
+    <div class="board-shell"><div id="board" class="board"></div></div>
+    <div class="status" id="status">マスをタップして開始</div>
+    <div class="result" id="result">
+      <div class="result-row"><div><div class="result-title" id="resultTitle"></div><small id="resultSub"></small></div><div class="result-time" id="resultTime"></div></div>
+      <div class="result-actions"><button class="again" id="againBtn">もう一度</button><button class="records" id="resultRecordsBtn">🏆 記録を見る</button></div>
+    </div>
+  </section>
 </div>
-<div class="record">🏆 <span id="recordLabel">初級ベスト</span>　<b id="best">---</b></div>
-<div class="info">
-<div class="stat"><b id="mineCount">10</b><span>残りの旗</span></div>
-<div class="stat"><b id="timer">0</b><span>秒</span></div>
-<div class="stat"><b id="state">待機</b><span>状態</span></div>
+
+<div class="modal hidden" id="modal">
+  <div class="dialog"><div class="icon" id="modalIcon">🏆</div><h2 id="modalTitle"></h2><p id="modalText"></p><button id="modalBtn">もう一度プレイ</button></div>
 </div>
-<div id="board"></div>
-<div class="actions"><button class="start" id="startBtn" type="button">▶ ゲーム開始</button><button class="reset" id="resetBtn" type="button">↻ 新しいゲーム</button></div>
-<p id="status">「ゲーム開始」を押してください</p><p class="hint">タップ：開く　長押し：🚩旗　※初手は安全</p>
-</main>
-<div class="modal hidden" id="modal"><div class="dialog"><h2 id="resultTitle"></h2><p id="resultText"></p><button id="modalBtn" type="button">もう一度プレイ</button></div></div>
+
 <script>
 (function(){
 "use strict";
-const LEVELS={easy:{label:"初級",rows:9,cols:9,mines:10},normal:{label:"中級",rows:16,cols:16,mines:40},hard:{label:"上級",rows:16,cols:30,mines:99}};
-let levelKey="easy",cfg=LEVELS.easy,cells=[],flags=new Set(),started=false,ended=false,seconds=0,interval=null,longTimer=null;
-const $=id=>document.getElementById(id),board=$("board"),mineEl=$("mineCount"),timerEl=$("timer"),stateEl=$("state"),statusEl=$("status"),startBtn=$("startBtn"),resetBtn=$("resetBtn"),modal=$("modal"),resultTitle=$("resultTitle"),resultText=$("resultText");
-function key(){return "minesweeper-best-"+levelKey}
-function best(){const v=localStorage.getItem(key());return v?Number(v):null}
-function showBest(){$("best").textContent=best()===null?"---":best()+"秒";$("recordLabel").textContent=cfg.label+"ベスト"}
-function neighbors(i){const r=Math.floor(i/cfg.cols),c=i%cfg.cols,out=[];for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(!dr&&!dc)continue;let nr=r+dr,nc=c+dc;if(nr>=0&&nr<cfg.rows&&nc>=0&&nc<cfg.cols)out.push(nr*cfg.cols+nc)}return out}
-function build(first){const total=cfg.rows*cfg.cols;cells=Array.from({length:total},()=>({mine:false,open:false,count:0}));const banned=new Set([first,...neighbors(first)]),pool=[];for(let i=0;i<total;i++)if(!banned.has(i))pool.push(i);for(let i=pool.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}pool.slice(0,cfg.mines).forEach(i=>cells[i].mine=true);cells.forEach((c,i)=>c.count=neighbors(i).filter(j=>cells[j].mine).length)}
+const LEVELS={
+ easy:{label:"ビギナー",short:"9×9",rows:9,cols:9,mines:10},
+ casual:{label:"イージー",short:"12×12",rows:12,cols:12,mines:20},
+ normal:{label:"中級",short:"16×16",rows:16,cols:16,mines:40},
+ hard:{label:"上級",short:"16×30",rows:16,cols:30,mines:99},
+ expert:{label:"エキスパート",short:"20×30",rows:20,cols:30,mines:130},
+ master:{label:"マスター",short:"24×32",rows:24,cols:32,mines:180}
+};
+let levelKey="easy",cfg=LEVELS.easy,cells=[],flags=new Set(),started=false,ended=false,seconds=0,interval=null,longTimer=null,opened=0;
+const $=id=>document.getElementById(id);
+const board=$("board"),mineEl=$("mineCount"),timerEl=$("timer"),stateEl=$("state"),statusEl=$("status"),progress=$("progress"),result=$("result");
+
+function bestKey(k=levelKey){return "minesweeper-apex-best-"+k}
+function getBest(k=levelKey){const v=localStorage.getItem(bestKey(k));return v===null?null:Number(v)}
+function setBest(k,v){localStorage.setItem(bestKey(k),String(v))}
+function formatTime(v){return v+"秒"}
+function buildLevels(){
+  $("levels").innerHTML=Object.entries(LEVELS).map(([k,v])=>'<button class="level '+(k===levelKey?"active":"")+'" data-level="'+k+'"><strong>'+v.label+'</strong><small>'+v.short+'　/　💣 '+v.mines+'</small></button>').join("");
+  document.querySelectorAll(".level").forEach(b=>b.addEventListener("click",()=>selectLevel(b.dataset.level)));
+}
+function selectLevel(k){
+  levelKey=k;cfg=LEVELS[k];buildLevels();updateDifficulty();resetGame();
+}
+function updateDifficulty(){
+  $("difficultyChip").textContent=cfg.label+" · "+cfg.short;
+}
+function neighbors(i){
+  const r=Math.floor(i/cfg.cols),c=i%cfg.cols,out=[];
+  for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){
+    if(!dr&&!dc)continue;
+    const nr=r+dr,nc=c+dc;
+    if(nr>=0&&nr<cfg.rows&&nc>=0&&nc<cfg.cols)out.push(nr*cfg.cols+nc);
+  }
+  return out;
+}
+function build(first){
+  const total=cfg.rows*cfg.cols;
+  cells=Array.from({length:total},()=>({mine:false,open:false,count:0}));
+  const banned=new Set([first,...neighbors(first)]),pool=[];
+  for(let i=0;i<total;i++)if(!banned.has(i))pool.push(i);
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}
+  pool.slice(0,cfg.mines).forEach(i=>cells[i].mine=true);
+  cells.forEach((c,i)=>c.count=neighbors(i).filter(j=>cells[j].mine).length);
+}
 function stopTimer(){if(interval){clearInterval(interval);interval=null}}
 function startTimer(){if(!interval)interval=setInterval(()=>{seconds++;timerEl.textContent=seconds},1000)}
-function reset(){stopTimer();flags.clear();started=false;ended=false;seconds=0;const total=cfg.rows*cfg.cols;cells=Array.from({length:total},()=>({mine:false,open:false,count:0}));stateEl.textContent="待機";timerEl.textContent="0";mineEl.textContent=cfg.mines;statusEl.textContent="「ゲーム開始」を押してください";startBtn.disabled=false;startBtn.textContent="▶ ゲーム開始";modal.classList.add("hidden");render();showBest()}
-function startGame(){if(started&&!ended)return;if(ended)reset();started=true;stateEl.textContent="プレイ中";statusEl.textContent="爆弾を避けて全部開こう！";startBtn.disabled=true;startBtn.textContent="プレイ中"}
-function openCell(i){if(!started||ended||cells[i].open||flags.has(i))return;if(!cells.some(c=>c.mine)){build(i);startTimer()}cells[i].open=true;if(cells[i].mine){lose();return}if(cells[i].count===0)neighbors(i).forEach(j=>{if(!cells[j].open&&!cells[j].mine)openCell(j)});render();if(cells.every(c=>c.mine||c.open))win()}
-function toggleFlag(i){if(!started||ended||cells[i].open)return;if(flags.has(i))flags.delete(i);else if(flags.size<cfg.mines)flags.add(i);render()}
-function win(){ended=true;stopTimer();stateEl.textContent="クリア";statusEl.textContent="🎉 クリア！";const old=best();let text=seconds+"秒でクリアしました。";if(old===null||seconds<old){localStorage.setItem(key(),seconds);text+="\n🏆 新記録！";showBest()}else text+="\nベストは "+old+"秒です。";showResult("🎉 CLEAR!",text)}
-function lose(){ended=true;stopTimer();cells.forEach(c=>{if(c.mine)c.open=true});stateEl.textContent="ゲームオーバー";statusEl.textContent="💥 爆弾に当たりました";render();showResult("💥 GAME OVER","爆弾を踏んでしまいました。")}
-function showResult(t,x){resultTitle.textContent=t;resultText.textContent=x;modal.classList.remove("hidden")}
-function render(){board.style.setProperty("--cols",cfg.cols);board.innerHTML="";cells.forEach((c,i)=>{const b=document.createElement("button");b.type="button";b.className="cell";if(c.open){b.classList.add("open");if(c.mine){b.classList.add("mine");b.textContent="💣"}else if(c.count){b.classList.add("n"+Math.min(c.count,4));b.textContent=c.count}}else if(flags.has(i)){b.classList.add("flag");b.textContent="🚩"}b.setAttribute("aria-label",c.open?(c.mine?"爆弾":c.count+"個の爆弾が隣接"):(flags.has(i)?"旗":"未開封"));let pressed=false;b.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button!==0)return;pressed=true;longTimer=setTimeout(()=>{if(pressed){pressed=false;toggleFlag(i)}},420)});b.addEventListener("pointerup",e=>{if(e.pointerType==="mouse"&&e.button!==0)return;if(longTimer){clearTimeout(longTimer);longTimer=null}if(pressed){pressed=false;openCell(i)}});b.addEventListener("pointercancel",()=>{pressed=false;if(longTimer){clearTimeout(longTimer);longTimer=null}});b.addEventListener("contextmenu",e=>{e.preventDefault();toggleFlag(i)});board.appendChild(b)});mineEl.textContent=cfg.mines-flags.size;timerEl.textContent=seconds}
-document.querySelectorAll(".level").forEach(btn=>btn.addEventListener("click",()=>{levelKey=btn.dataset.level;cfg=LEVELS[levelKey];document.querySelectorAll(".level").forEach(x=>x.classList.toggle("active",x===btn));$("difficultyText").textContent=cfg.label+" ・ "+cfg.rows+"×"+cfg.cols+" ・ 爆弾"+cfg.mines;$("recordLabel").textContent=cfg.label+"ベスト";reset()}));
-startBtn.addEventListener("click",startGame);resetBtn.addEventListener("click",reset);$("modalBtn").addEventListener("click",()=>{modal.classList.add("hidden");reset();startGame()});document.addEventListener("dblclick",e=>{if(e.target.closest("#board"))e.preventDefault()},{passive:false});
-reset();
+function resetGame(){
+  stopTimer();flags.clear();started=false;ended=false;seconds=0;opened=0;
+  cells=Array.from({length:cfg.rows*cfg.cols},()=>({mine:false,open:false,count:0}));
+  mineEl.textContent=cfg.mines;timerEl.textContent="0";stateEl.textContent="READY";
+  statusEl.textContent="マスをタップして開始";progress.style.width="0%";result.classList.remove("show");render();
+}
+function startGame(){
+  if(ended)resetGame();
+  started=true;stateEl.textContent="PLAYING";statusEl.textContent="爆弾を避けて全部開こう";
+  $("homeScreen").classList.add("hidden");$("gameScreen").classList.remove("hidden");render();
+}
+function openCell(i){
+  if(!started||ended||cells[i].open||flags.has(i))return;
+  if(!cells.some(c=>c.mine)){build(i);startTimer()}
+  cells[i].open=true;opened++;
+  if(cells[i].mine){lose();return}
+  if(cells[i].count===0)neighbors(i).forEach(j=>{if(!cells[j].open&&!cells[j].mine&&!flags.has(j))openCell(j)});
+  render();
+  const safe=cfg.rows*cfg.cols-cfg.mines;
+  progress.style.width=Math.min(100,opened/safe*100)+"%";
+  if(cells.every(c=>c.mine||c.open))win();
+}
+function toggleFlag(i){
+  if(!started||ended||cells[i].open)return;
+  if(flags.has(i))flags.delete(i);else if(flags.size<cfg.mines)flags.add(i);
+  render();
+}
+function win(){
+  ended=true;stopTimer();stateEl.textContent="CLEAR";statusEl.textContent="🎉 全マスクリア！";
+  const old=getBest(),isNew=old===null||seconds<old;
+  if(isNew)setBest(levelKey,seconds);
+  $("resultTitle").textContent=isNew?"🏆 NEW RECORD":"🎉 CLEAR";
+  $("resultSub").textContent=isNew?"自己ベストを更新しました":("ベスト "+formatTime(old));
+  $("resultTime").textContent=formatTime(seconds);result.classList.add("show");showRecords();
+}
+function lose(){
+  ended=true;stopTimer();cells.forEach(c=>{if(c.mine)c.open=true});
+  stateEl.textContent="GAME OVER";statusEl.textContent="💥 地雷を踏みました";render();
+  showModal("💥","GAME OVER","地雷を踏みました。\nもう一度挑戦しましょう。");
+}
+function render(){
+  board.style.setProperty("--cols",cfg.cols);
+  board.innerHTML="";
+  const minCell=cfg.cols>=30?25:cfg.cols>=16?28:32;
+  board.style.setProperty("--cell",minCell+"px");
+  cells.forEach((c,i)=>{
+    const b=document.createElement("button");b.type="button";b.className="cell";
+    if(c.open){b.classList.add("open");if(c.mine){b.classList.add("mine");b.textContent="💣"}else if(c.count){b.classList.add("n"+Math.min(c.count,8));b.textContent=c.count}}
+    else if(flags.has(i)){b.classList.add("flag");b.textContent="🚩"}
+    b.setAttribute("aria-label",c.open?(c.mine?"爆弾":c.count+"個の爆弾が隣接"):(flags.has(i)?"旗":"未開封"));
+    let pressed=false;
+    b.addEventListener("pointerdown",e=>{
+      if(e.pointerType==="mouse"&&e.button!==0)return;
+      pressed=true;longTimer=setTimeout(()=>{if(pressed){pressed=false;toggleFlag(i)}},420);
+    });
+    b.addEventListener("pointerup",e=>{
+      if(e.pointerType==="mouse"&&e.button!==0)return;
+      if(longTimer){clearTimeout(longTimer);longTimer=null}
+      if(pressed){pressed=false;openCell(i)}
+    });
+    b.addEventListener("pointercancel",()=>{pressed=false;if(longTimer){clearTimeout(longTimer);longTimer=null}});
+    b.addEventListener("contextmenu",e=>{e.preventDefault();toggleFlag(i)});
+    board.appendChild(b);
+  });
+  mineEl.textContent=cfg.mines-flags.size;timerEl.textContent=seconds;
+}
+function showRecords(){
+  $("recordList").innerHTML=Object.entries(LEVELS).map(([k,v])=>{
+    const best=getBest(k);
+    return '<div class="record-row"><div class="rank">'+v.short+'</div><div class="name">'+v.label+'<small>💣 '+v.mines+'個</small></div><b>'+(best===null?"—":formatTime(best))+'</b></div>';
+  }).join("");
+}
+function showModal(icon,title,text){
+  $("modalIcon").textContent=icon;$("modalTitle").textContent=title;$("modalText").textContent=text;$("modal").classList.remove("hidden");
+}
+function goHome(){stopTimer();$("modal").classList.add("hidden");$("gameScreen").classList.add("hidden");$("homeScreen").classList.remove("hidden");showRecords()}
+$("startBtn").addEventListener("click",startGame);
+$("homeBtn").addEventListener("click",goHome);
+$("backBtn").addEventListener("click",goHome);
+$("resetBtn").addEventListener("click",resetGame);
+$("againBtn").addEventListener("click",()=>{resetGame();startGame()});
+$("recordBtn").addEventListener("click",()=>{goHome()});
+$("resultRecordsBtn").addEventListener("click",goHome);
+$("modalBtn").addEventListener("click",()=>{$("modal").classList.add("hidden");resetGame();startGame()});
+document.addEventListener("dblclick",e=>{if(e.target.closest("#board"))e.preventDefault()},{passive:false});
+buildLevels();updateDifficulty();resetGame();showRecords();
 })();
 </script>
 </body>
